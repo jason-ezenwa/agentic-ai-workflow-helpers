@@ -54,15 +54,34 @@ This returns layout properties, typography, colors, component structure, spacing
 
 ---
 
-## Step 3: Capture Visual Reference
+## Step 3: Capture and Store Visual Reference
 
-Run `get_screenshot` for a visual source of truth:
+The Figma screenshot serves as the visual source of truth throughout implementation and validation. Screenshots are stored using this path structure:
+
+```
+/tmp/figma-screenshots/<component-or-page-name>/<node-name>.png
+```
+
+- `<component-or-page-name>` — kebab-case name of the page or component being worked on (e.g. `landing-page`, `event-details`)
+- `<node-name>` — kebab-case name of the specific node or section (e.g. `hero-section`, `card`)
+
+**Example:**
+```
+/tmp/figma-screenshots/landing-page/hero-section.png
+/tmp/figma-screenshots/event-details/card.png
+```
+
+**Before fetching, check if the screenshot already exists at the expected path.** If it does, use it directly — do not call the MCP. Only fetch from the MCP if:
+- The file does not exist, or
+- A more detailed view is needed (e.g. a zoomed-in screenshot of a specific sub-section for closer comparison)
+
+If fetching is needed, run:
 
 ```
 get_screenshot(fileKey=":fileKey", nodeId="1-2")
 ```
 
-Keep this screenshot accessible throughout implementation — it is the primary validation reference.
+Immediately save the result to disk — do not rely on it staying in context. Create the directory if it doesn't exist. Record the saved path — this is the reference used in Step 7b.
 
 ---
 
@@ -102,6 +121,7 @@ Before writing any code, save a structured spec to `figma-outputs/` at the root 
 - **Images**: [List of images]
 - **Icons**: [List of icons]
 - **Fonts**: [Font families used]
+- **Figma Screenshots**: [List of saved screenshot paths, e.g. `/tmp/figma-screenshots/landing-page/hero-section.png`]
 
 ## Code Connect Status
 [Did we use Code Connect? Yes / No / Skipped — reason]
@@ -142,11 +162,15 @@ After implementation, perform automated visual comparison and fix any discrepanc
 
 ### 7a: Capture Live Screenshot
 
-Use Playwright to screenshot the implemented component at the same viewport size as the Figma design:
+Use Playwright to screenshot the implemented component at the same viewport size as the Figma design. Save implementation screenshots alongside the Figma reference using the `-impl` suffix:
+
+```
+/tmp/figma-screenshots/<component-or-page-name>/<node-name>-impl.png
+```
 
 ```bash
 # Full page screenshot
-npx playwright screenshot --viewport-size="<width>,<height>" --full-page <local-url> /tmp/implementation-screenshot.png
+npx playwright screenshot --viewport-size="<width>,<height>" --full-page <local-url> /tmp/figma-screenshots/<component-or-page-name>/<node-name>-impl.png
 ```
 
 **Section-level screenshots (recommended for large pages):**
@@ -155,7 +179,7 @@ When implementing a page with multiple sections, capture each section individual
 
 ```bash
 # Scroll to section and capture viewport
-npx playwright screenshot --viewport-size="1440,900" <local-url>#section-id /tmp/section-name.png
+npx playwright screenshot --viewport-size="1440,900" <local-url>#section-id /tmp/figma-screenshots/<component-or-page-name>/<node-name>-impl.png
 ```
 
 Or use a Playwright script to scroll and capture specific regions:
@@ -170,7 +194,7 @@ const { chromium } = require('playwright');
   // Scroll to section
   await page.locator('text=Section Heading').scrollIntoViewIfNeeded();
   await page.waitForTimeout(500);
-  await page.screenshot({ path: '/tmp/section-screenshot.png' });
+  await page.screenshot({ path: '/tmp/figma-screenshots/<component-or-page-name>/<node-name>-impl.png' });
   
   await browser.close();
 })();
@@ -184,7 +208,7 @@ const { chromium } = require('playwright');
 
 ### 7b: Compare Against Figma Screenshot
 
-Place the Figma screenshot (from Step 3) and the implementation screenshot side-by-side. Identify discrepancies in:
+Load the Figma reference screenshot from its saved path (recorded in the spec in Step 5). Place it side-by-side with the implementation screenshot. Only re-fetch from the MCP if the file is missing or a more detailed/zoomed view of a specific area is needed for closer comparison. Identify discrepancies in:
 
 1. **Layout** — spacing, alignment, sizing, overflow
 2. **Typography** — font family, size, weight, line height, color
