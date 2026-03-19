@@ -33,55 +33,42 @@ When using the `figma-desktop` MCP and the user has NOT provided a URL, tools au
 
 ---
 
-## Step 2: Fetch Design Context
+## Steps 2 & 3: Fetch Design Context + Preview (Run in Parallel)
 
-Run `get_design_context` with the file key and node ID:
+Use sub-agents to do this work concurrently — all fetching happens simultaneously before implementation begins.
+
+### For a single frame
+
+Run directly (no sub-agent needed):
 
 ```
 get_design_context(fileKey=":fileKey", nodeId="1-2")
-```
-
-This returns layout properties, typography, colors, component structure, spacing, and design tokens.
-
-**If the response is truncated or too large:**
-1. Run `get_metadata(fileKey=":fileKey", nodeId="1-2")` to get the high-level node map. Pass the same top-level node ID — metadata returns the node tree without full style data, so it won't be truncated.
-2. Identify the specific child nodes needed from the metadata.
-3. Fetch each child individually: `get_design_context(fileKey=":fileKey", nodeId=":childNodeId")`.
-
-**Code Connect handling:**
-- If the tool returns a script asking to map components, **STOP** and follow the script exactly as instructed.
-- Do not proceed with implementation until Code Connect mappings are resolved or explicitly skipped by the user.
-
----
-
-## Step 3: Capture and Store Visual Reference
-
-The Figma screenshot serves as the visual source of truth throughout implementation and validation. Screenshots are stored using this path structure:
-
-```
-/tmp/figma-screenshots/<component-or-page-name>/<node-name>.png
-```
-
-- `<component-or-page-name>` — kebab-case name of the page or component being worked on (e.g. `landing-page`, `event-details`)
-- `<node-name>` — kebab-case name of the specific node or section (e.g. `hero-section`, `card`)
-
-**Example:**
-```
-/tmp/figma-screenshots/landing-page/hero-section.png
-/tmp/figma-screenshots/event-details/card.png
-```
-
-**Before fetching, check if the screenshot already exists at the expected path.** If it does, use it directly — do not call the MCP. Only fetch from the MCP if:
-- The file does not exist, or
-- A more detailed view is needed (e.g. a zoomed-in screenshot of a specific sub-section for closer comparison)
-
-If fetching is needed, run:
-
-```
 get_screenshot(fileKey=":fileKey", nodeId="1-2")
 ```
 
-Immediately save the result to disk — do not rely on it staying in context. Create the directory if it doesn't exist. Record the saved path — this is the reference used in Step 7b.
+Alongside this, spawn one **codebase scan sub-agent**: give it a plain-language description of the UI being implemented and ask it to find existing components, patterns, and design tokens that are likely reusable. It returns file paths and a summary.
+
+### For multiple frames
+
+Spawn one **sub-agent per frame** in parallel. Each sub-agent:
+1. Calls `get_design_context` for its assigned frame — returns the full context (layout, typography, colors, spacing, tokens)
+2. Calls `get_screenshot` for its assigned frame — previews the visual reference
+3. Returns the complete design context and any Code Connect findings
+
+Simultaneously, spawn one **codebase scan sub-agent** as above.
+
+Collect all results before proceeding to Step 5.
+
+### Handling large design contexts
+
+**If `get_design_context` is truncated or too large** (single frame or within a sub-agent):
+1. Run `get_metadata(fileKey=":fileKey", nodeId="1-2")` to get the high-level node map.
+2. Identify the specific child nodes needed.
+3. Fetch each child individually: `get_design_context(fileKey=":fileKey", nodeId=":childNodeId")`.
+
+### Code Connect handling
+- If `get_design_context` returns a script asking to map components, **STOP** and follow the script exactly.
+- Do not proceed with implementation until Code Connect mappings are resolved or explicitly skipped by the user.
 
 ---
 
@@ -121,7 +108,7 @@ Before writing any code, save a structured spec to `figma-outputs/` at the root 
 - **Images**: [List of images]
 - **Icons**: [List of icons]
 - **Fonts**: [Font families used]
-- **Figma Screenshots**: [List of saved screenshot paths, e.g. `/tmp/figma-screenshots/landing-page/hero-section.png`]
+- **Figma Frames**: [fileKey and nodeId for each frame, e.g. `fileKey: abc123, nodeId: 573:158941`]
 
 ## Code Connect Status
 [Did we use Code Connect? Yes / No / Skipped — reason]
@@ -162,53 +149,104 @@ After implementation, perform automated visual comparison and fix any discrepanc
 
 ### 7a: Capture Live Screenshot
 
-Use Playwright to screenshot the implemented component at the same viewport size as the Figma design. Save implementation screenshots alongside the Figma reference using the `-impl` suffix:
+Use Playwright to screenshot the implemented component at the same viewport size as the Figma design. Save implementation screenshots with the `-impl` suffix — this is mandatory:
 
 ```
 /tmp/figma-screenshots/<component-or-page-name>/<node-name>-impl.png
 ```
 
-```bash
-# Full page screenshot
-npx playwright screenshot --viewport-size="<width>,<height>" --full-page <local-url> /tmp/figma-screenshots/<component-or-page-name>/<node-name>-impl.png
+**`-impl` suffix is required.** A screenshot without it will be mistaken for a Figma reference.
+
+```
+/tmp/figma-screenshots/ticket-purchase-flow/events-page-impl.png  ← correct
+/tmp/figma-screenshots/ticket-purchase-flow/events-page.png        ← wrong
 ```
 
-**Section-level screenshots (recommended for large pages):**
+**IMPORTANT: Always prefer the CLI over writing scripts.** The `npx playwright screenshot` CLI is self-contained and avoids module resolution issues. Only write a script if you need complex interactions (clicking, scrolling to dynamic content, etc.).
+
+#### Setup (one-time)
+
+```bash
+npx playwright install chromium
+```
+
+#### CLI Screenshots (preferred)
+
+```bash
+# Basic screenshot
+npx playwright screenshot --viewport-size="<width>,<height>" <local-url> /tmp/screenshot.png
+
+# Full scrollable page
+npx playwright screenshot --viewport-size="<width>,<height>" --full-page <local-url> /tmp/screenshot.png
+
+# Wait for content to load (use instead of writing a script just for waits)
+npx playwright screenshot --viewport-size="1440,900" --wait-for-timeout=2000 <local-url> /tmp/screenshot.png
+
+# Wait for specific element before capturing
+npx playwright screenshot --viewport-size="1440,900" --wait-for-selector=".hero-section" <local-url> /tmp/screenshot.png
+```
+
+#### Section-level screenshots (recommended for large pages)
 
 When implementing a page with multiple sections, capture each section individually rather than the entire page. This makes comparison more manageable and discrepancies easier to identify.
 
 ```bash
-# Scroll to section and capture viewport
-npx playwright screenshot --viewport-size="1440,900" <local-url>#section-id /tmp/figma-screenshots/<component-or-page-name>/<node-name>-impl.png
+# Navigate to section via URL hash
+npx playwright screenshot --viewport-size="1440,900" --wait-for-timeout=1000 "<local-url>#section-id" /tmp/section.png
 ```
 
-Or use a Playwright script to scroll and capture specific regions:
+#### Scripts (only when CLI is insufficient)
+
+Only write a Playwright script when you need complex interactions like clicking through a flow, scrolling to dynamic content, or capturing multiple states.
+
+**Critical: Run scripts from the project directory**, not `/tmp/`. Node needs access to `node_modules`.
+
+```bash
+# WRONG - will fail with "Cannot find module 'playwright'"
+node /tmp/my-script.js
+
+# CORRECT - run from project directory
+cd /path/to/project && node scripts/capture-screenshot.js
+```
+
+If you must write a script:
 
 ```javascript
+// Save this IN the project directory, e.g., scripts/capture-screenshot.js
 const { chromium } = require('playwright');
+
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-  await page.goto('<local-url>', { waitUntil: 'networkidle' });
+  await page.goto('http://localhost:3000', { waitUntil: 'networkidle' });
   
   // Scroll to section
   await page.locator('text=Section Heading').scrollIntoViewIfNeeded();
   await page.waitForTimeout(500);
-  await page.screenshot({ path: '/tmp/figma-screenshots/<component-or-page-name>/<node-name>-impl.png' });
+  await page.screenshot({ path: '/tmp/section-screenshot.png' });
   
   await browser.close();
 })();
 ```
 
-**Best practices:**
-- Match the viewport to the Figma frame dimensions from Step 2
-- If Playwright is not installed, run `npx playwright install chromium` first
-- For component-level screenshots, navigate to a route or Storybook page that isolates the component
-- For pages with many sections, capture and compare each section separately — this makes the fix loop faster and more focused
+Then run it:
+
+```bash
+cd /path/to/project && node scripts/capture-screenshot.js
+```
+
+#### Best practices
+
+- **Prefer CLI over scripts** — fewer things can go wrong
+- **Use `--wait-for-timeout` or `--wait-for-selector`** instead of writing scripts just to add waits
+- **Run scripts from the project directory** where `node_modules` exists
+- **Use CommonJS (`require`)** not ESM (`import`) to avoid syntax issues
+- Match the viewport to the Figma frame dimensions from the design context
+- For pages with many sections, capture and compare each section separately
 
 ### 7b: Compare Against Figma Screenshot
 
-Load the Figma reference screenshot from its saved path (recorded in the spec in Step 5). Place it side-by-side with the implementation screenshot. Only re-fetch from the MCP if the file is missing or a more detailed/zoomed view of a specific area is needed for closer comparison. Identify discrepancies in:
+Call `get_screenshot(fileKey, nodeId)` using the values recorded in the spec — the Figma reference appears as an embedded image in context. Then use the `Read` tool on the `-impl.png` file — the implementation screenshot appears in the same context. Compare both images visually. Identify discrepancies in:
 
 1. **Layout** — spacing, alignment, sizing, overflow
 2. **Typography** — font family, size, weight, line height, color
@@ -247,10 +285,15 @@ Only mark complete when ALL items pass:
 | Issue | Cause | Solution |
 |-------|-------|----------|
 | Design context is truncated | Design is too complex for a single response | Use `get_metadata` to get node structure, then fetch specific child nodes individually |
-| Visual mismatch after implementation | Spacing, colour, or typography discrepancy | Compare side-by-side with the Step 3 screenshot; re-check values in design context |
+| Visual mismatch after implementation | Spacing, colour, or typography discrepancy | Re-fetch Figma reference via `get_screenshot` and read the `-impl.png` side-by-side; re-check values in design context |
 | Assets not loading | `localhost` URLs being modified | Use the MCP-provided `localhost` URLs directly without modification |
 | Design tokens differ from Figma | Project tokens have different values | Prefer project tokens for consistency; adjust spacing/sizing minimally to match visuals |
 | Code Connect script appears | Component mapping required | Stop and follow the script exactly; do not proceed until resolved or skipped |
 | Playwright not installed | Browser executable missing | Run `npx playwright install chromium` before taking screenshots |
 | Screenshot viewport doesn't match Figma | Wrong dimensions used | Check Figma frame width/height in design context and pass to `--viewport-size` |
 | Can't screenshot component in isolation | No dedicated route or Storybook | Create a temporary test route or use browser devtools to isolate the element |
+| "Cannot find module 'playwright'" | Script running from `/tmp/` or outside project | Run scripts from the project directory where `node_modules` exists, or use the CLI instead |
+| No Figma reference for comparison | fileKey/nodeId not recorded | Record fileKey and nodeId in the spec (Step 5); call `get_screenshot` again in Step 7b |
+| Implementation screenshot missing `-impl` suffix | Naming convention not followed | All Playwright screenshots must end in `-impl.png` — a file without the suffix will be mistaken for a Figma reference |
+| ESM/CJS import errors | Mixing `import` and `require` syntax | Use CommonJS (`require`) syntax; avoid ESM (`import`) for Playwright scripts |
+| Page not fully loaded in screenshot | No wait for content | Use `--wait-for-timeout=2000` or `--wait-for-selector=".selector"` CLI flags |

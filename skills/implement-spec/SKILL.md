@@ -58,7 +58,7 @@ This skill guides you through implementing a feature defined in a Technical Spec
 
 Split implementation by file type:
 
-**Backend service files and utility functions** — use the `tdd` skill to drive implementation. Follow the RED→GREEN→REFACTOR cycle, one behaviour at a time, until all behaviours from the spec are covered.
+**Backend service files and utility functions** — **STOP before writing any implementation.** Read and follow the `tdd` skill. Do not write a single line of implementation until the first failing test exists and you have run the project's test script (check `package.json` scripts) to confirm it is RED. The implementation file must not exist until a test requires it.
 
 **Everything else** (DTOs, models, resolvers, config, pages, components, etc.) — implement directly, file-by-file, following the codebase's existing patterns (e.g. Service repository pattern, UI component library).
 
@@ -70,15 +70,15 @@ Split implementation by file type:
 4.  **Fix Lints**: For lint fixes, ensure you do them yourself, not with lint commands, to avoid modification of files that are not related to the spec.
 
 ### 4. Self-Review (The "Guardrails" Check)
-Before communicating completion to the user, you must perform a self-review (using the `code-review` skill) of your implementation against the Spec.
+Before communicating completion to the user, delegate the self-review to a **sub-agent** using the `code-review` skill. Using a sub-agent avoids bias from the implementing agent reviewing its own work.
 
-**Ask yourself:**
+Pass the sub-agent the list of files changed and the spec content. It runs `code-review` and returns a report. Using the report, ask yourself:
 1.  **Completeness**: Did I implement every endpoint defined in "API Design"?
 2.  **Compliance**: Did I meet all "Goals"? Did I avoid all "Non-Goals"?
 3.  **Quality**: Are there any linting errors or obvious bugs?
 4.  **Consistency**: Does the code match the "Proposed Architecture"?
 
-> **If you find discrepancies:** Fix them now. Do not ask the user for permission to fix bugs you introduced. Once fixes are applied, **re-run the `code-review` skill one more time** to confirm the issues are resolved. If issues persist after this second pass, surface them to the user rather than looping further.
+> **If you find discrepancies:** Fix them now. Do not ask the user for permission to fix bugs you introduced. Once fixes are applied, **spawn the sub-agent one more time** to confirm the issues are resolved. If issues persist after this second pass, escalate to the user rather than looping further.
 
 ### 5. PR Creation (After Clean Self-Review)
 Only once the build is clean and the self-review passes:
@@ -130,7 +130,7 @@ Only when you are **confident** that:
 1.  The code is implemented.
 2.  The app builds without errors.
 3.  The implementation matches the Spec.
-4.  You have conducted a self-review using the `code-review` skill.
+4.  A sub-agent has conducted a self-review using the `code-review` skill.
 5.  A PR has been raised (or the user has been notified of the branch if `gh` is unavailable).
 
 Then notify the user with:
