@@ -7,6 +7,8 @@ description: Sets up a Git worktree for a task or feature. Derives a branch name
 
 Creates an isolated Git worktree for a task or feature so work happens independently of the main working tree.
 
+**Prerequisite**: You must be inside the repository directory (or have navigated to it) before starting. The worktrees folder will be created as a sibling to that repository.
+
 **Follow these steps in order. Do not skip steps.**
 
 ---
@@ -64,8 +66,8 @@ After setup, the layout looks like:
 
 ```
 .
-├── api-service/                    # main repo (where you run setup-worktree)
-└── api-service-worktrees/          # dedicated worktrees folder
+├── api-service/                    # main repo
+└── api-service-worktrees/          # dedicated worktrees folder (sibling of main repo)
     ├── feat-order-tracking/        # worktree for feat/order-tracking
     ├── fix-invoice-rounding/       # worktree for fix/invoice-rounding
     └── chore-update-deps/          # worktree for chore/update-deps
