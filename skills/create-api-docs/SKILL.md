@@ -21,7 +21,7 @@ This skill guides the creation of API documentation using a standardized format 
 
 ## API Documentation Template
 
-```markdown
+````markdown
 # [Feature Name] API Documentation
 
 [Brief 1-2 sentence description of what this API provides and its primary use cases.]
@@ -82,7 +82,7 @@ Content-Type: application/json
 ---
 
 [Repeat for each endpoint...]
-```
+````
 
 ## Documentation Standards
 
@@ -132,7 +132,7 @@ Include when applicable:
 ### Special Endpoint Types
 
 #### Streaming/SSE Endpoints
-```markdown
+````markdown
 **Response**:
 ```
 HTTP/1.1 200 OK
@@ -149,19 +149,19 @@ data: {"type":"text","content":"Second chunk..."}
 
 data: {"type":"done"}
 ```
-```
+````
 
 #### Token-Validated (Public) Endpoints
-```markdown
+````markdown
 **Authentication**: None (token in path validates access)
 
 **Notes**:
 - Uses `@AllowAnonymous()` decorator to bypass authentication
 - Token validates access instead of Bearer authentication
-```
+````
 
 #### List Endpoints with Pagination
-```markdown
+````markdown
 **Query Parameters**:
 - `page` (optional): Page number, default: 1
 - `limit` (optional): Items per page, default: 20, max: 100
@@ -180,7 +180,7 @@ data: {"type":"done"}
   }
 }
 ```
-```
+````
 
 ## Validation Checklist
 Before finalizing documentation, verify:
