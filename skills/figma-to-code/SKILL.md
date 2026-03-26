@@ -145,130 +145,29 @@ Translate the Figma output into the project's framework, styles, and conventions
 
 ## Step 7: Validate and Fix Visual Discrepancies
 
-After implementation, perform automated visual comparison and fix any discrepancies.
+Delegate this step to a **QA agent**. Do not perform browser validation yourself.
 
-### 7a: Capture Live Screenshot
+Provide the QA agent with:
+- The **local URL** of the implemented component or page
+- The **Figma fileKey and nodeId(s)** recorded in the spec (Step 5)
+- The **Figma frame dimensions** (width × height) from the design context
+- A description of what to validate: layout, typography, colors, interactive states, responsive behaviour, and assets
 
-Use Playwright to screenshot the implemented component at the same viewport size as the Figma design. Save implementation screenshots with the `-impl` suffix — this is mandatory:
+The QA agent will return a structured validation report with a pass/fail verdict per criterion and screenshot evidence.
 
-```
-/tmp/figma-screenshots/<component-or-page-name>/<node-name>-impl.png
-```
+### 7b: Fix Discrepancies
 
-**`-impl` suffix is required.** A screenshot without it will be mistaken for a Figma reference.
-
-```
-/tmp/figma-screenshots/ticket-purchase-flow/events-page-impl.png  ← correct
-/tmp/figma-screenshots/ticket-purchase-flow/events-page.png        ← wrong
-```
-
-**IMPORTANT: Always prefer the CLI over writing scripts.** The `npx playwright screenshot` CLI is self-contained and avoids module resolution issues. Only write a script if you need complex interactions (clicking, scrolling to dynamic content, etc.).
-
-#### Setup (one-time)
-
-```bash
-npx playwright install chromium
-```
-
-#### CLI Screenshots (preferred)
-
-```bash
-# Basic screenshot
-npx playwright screenshot --viewport-size="<width>,<height>" <local-url> /tmp/screenshot.png
-
-# Full scrollable page
-npx playwright screenshot --viewport-size="<width>,<height>" --full-page <local-url> /tmp/screenshot.png
-
-# Wait for content to load (use instead of writing a script just for waits)
-npx playwright screenshot --viewport-size="1440,900" --wait-for-timeout=2000 <local-url> /tmp/screenshot.png
-
-# Wait for specific element before capturing
-npx playwright screenshot --viewport-size="1440,900" --wait-for-selector=".hero-section" <local-url> /tmp/screenshot.png
-```
-
-#### Section-level screenshots (recommended for large pages)
-
-When implementing a page with multiple sections, capture each section individually rather than the entire page. This makes comparison more manageable and discrepancies easier to identify.
-
-```bash
-# Navigate to section via URL hash
-npx playwright screenshot --viewport-size="1440,900" --wait-for-timeout=1000 "<local-url>#section-id" /tmp/section.png
-```
-
-#### Scripts (only when CLI is insufficient)
-
-Only write a Playwright script when you need complex interactions like clicking through a flow, scrolling to dynamic content, or capturing multiple states.
-
-**Critical: Run scripts from the project directory**, not `/tmp/`. Node needs access to `node_modules`.
-
-```bash
-# WRONG - will fail with "Cannot find module 'playwright'"
-node /tmp/my-script.js
-
-# CORRECT - run from project directory
-cd /path/to/project && node scripts/capture-screenshot.js
-```
-
-If you must write a script:
-
-```javascript
-// Save this IN the project directory, e.g., scripts/capture-screenshot.js
-const { chromium } = require('playwright');
-
-(async () => {
-  const browser = await chromium.launch();
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
-  await page.goto('http://localhost:3000', { waitUntil: 'networkidle' });
-  
-  // Scroll to section
-  await page.locator('text=Section Heading').scrollIntoViewIfNeeded();
-  await page.waitForTimeout(500);
-  await page.screenshot({ path: '/tmp/section-screenshot.png' });
-  
-  await browser.close();
-})();
-```
-
-Then run it:
-
-```bash
-cd /path/to/project && node scripts/capture-screenshot.js
-```
-
-#### Best practices
-
-- **Prefer CLI over scripts** — fewer things can go wrong
-- **Use `--wait-for-timeout` or `--wait-for-selector`** instead of writing scripts just to add waits
-- **Run scripts from the project directory** where `node_modules` exists
-- **Use CommonJS (`require`)** not ESM (`import`) to avoid syntax issues
-- Match the viewport to the Figma frame dimensions from the design context
-- For pages with many sections, capture and compare each section separately
-
-### 7b: Compare Against Figma Screenshot
-
-Call `get_screenshot(fileKey, nodeId)` using the values recorded in the spec — the Figma reference appears as an embedded image in context. Then use the `Read` tool on the `-impl.png` file — the implementation screenshot appears in the same context. Compare both images visually. Identify discrepancies in:
-
-1. **Layout** — spacing, alignment, sizing, overflow
-2. **Typography** — font family, size, weight, line height, color
-3. **Colors** — backgrounds, borders, shadows, text colors
-4. **Assets** — images, icons, illustrations rendering correctly
-5. **Borders & Radii** — corner radius, border width/style/color
-
-### 7c: Fix Discrepancies Iteratively
-
-For each discrepancy found:
+For each failure in the report:
 
 1. Identify the specific CSS property or value that differs
 2. Cross-reference the Figma design context from Step 2 for the correct value
-3. Update the code to match the Figma specification
-4. Re-capture the implementation screenshot
-5. Re-compare until the implementation matches the design
+3. Update the code to match
 
-**Repeat the capture → compare → fix cycle until no visual discrepancies remain.**
+Once fixes are applied, **delegate to the QA agent again** to re-validate. Repeat until the report is a full pass.
 
-### 7d: Final Validation Checklist
+### 7c: Final Validation Checklist
 
-Only mark complete when ALL items pass:
+Only mark complete when the QA report shows ALL passing:
 
 - [ ] Layout matches (spacing, alignment, sizing)
 - [ ] Typography matches (font, size, weight, line height)
@@ -285,15 +184,9 @@ Only mark complete when ALL items pass:
 | Issue | Cause | Solution |
 |-------|-------|----------|
 | Design context is truncated | Design is too complex for a single response | Use `get_metadata` to get node structure, then fetch specific child nodes individually |
-| Visual mismatch after implementation | Spacing, colour, or typography discrepancy | Re-fetch Figma reference via `get_screenshot` and read the `-impl.png` side-by-side; re-check values in design context |
+| Visual mismatch after implementation | Spacing, colour, or typography discrepancy | Fix the flagged CSS properties, then re-delegate to the QA agent for re-validation |
 | Assets not loading | `localhost` URLs being modified | Use the MCP-provided `localhost` URLs directly without modification |
 | Design tokens differ from Figma | Project tokens have different values | Prefer project tokens for consistency; adjust spacing/sizing minimally to match visuals |
 | Code Connect script appears | Component mapping required | Stop and follow the script exactly; do not proceed until resolved or skipped |
-| Playwright not installed | Browser executable missing | Run `npx playwright install chromium` before taking screenshots |
-| Screenshot viewport doesn't match Figma | Wrong dimensions used | Check Figma frame width/height in design context and pass to `--viewport-size` |
-| Can't screenshot component in isolation | No dedicated route or Storybook | Create a temporary test route or use browser devtools to isolate the element |
-| "Cannot find module 'playwright'" | Script running from `/tmp/` or outside project | Run scripts from the project directory where `node_modules` exists, or use the CLI instead |
-| No Figma reference for comparison | fileKey/nodeId not recorded | Record fileKey and nodeId in the spec (Step 5); call `get_screenshot` again in Step 7b |
-| Implementation screenshot missing `-impl` suffix | Naming convention not followed | All Playwright screenshots must end in `-impl.png` — a file without the suffix will be mistaken for a Figma reference |
-| ESM/CJS import errors | Mixing `import` and `require` syntax | Use CommonJS (`require`) syntax; avoid ESM (`import`) for Playwright scripts |
-| Page not fully loaded in screenshot | No wait for content | Use `--wait-for-timeout=2000` or `--wait-for-selector=".selector"` CLI flags |
+| No Figma reference for comparison | fileKey/nodeId not recorded | Record fileKey and nodeId in the spec (Step 5) — pass them to the QA agent when delegating Step 7 |
+| Can't screenshot component in isolation | No dedicated route | Create a temporary test route to isolate the component, then provide that URL to Eren |
