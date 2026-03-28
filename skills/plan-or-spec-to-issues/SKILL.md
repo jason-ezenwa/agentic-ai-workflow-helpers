@@ -129,6 +129,7 @@ Group issues by their level. For each level, write a natural-language note descr
 |-------|--------|-------|
 | 1 | 001, 002 | No dependencies. Both can be opened in separate worktrees and worked simultaneously. |
 | 2 | 003 | Start after 001 and 002 are merged. |
+| 3 | 004, 005 | Both unblocked by 003. Can be picked up in parallel worktrees once 003 is merged. |
 
 ### Picking up an issue
 
