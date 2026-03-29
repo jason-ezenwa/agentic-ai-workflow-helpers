@@ -26,7 +26,11 @@ When a scenario involves a pure API call with no UI, use `curl` via Bash. Do not
 
 Record the response status and body for each request, and compare against the expected outcome from the test plan.
 
-### 4. Check for Errors
+### 4. Screenshots
+
+Save any screenshots taken during execution to `/tmp/<feature-slug>/`. Create the directory if it does not exist. Use descriptive filenames that identify the scenario and step (e.g., `checkout-step2-payment-form.png`).
+
+### 5. Check for Errors
 
 After exercising the feature, review console output and network activity for unexpected failures:
 
