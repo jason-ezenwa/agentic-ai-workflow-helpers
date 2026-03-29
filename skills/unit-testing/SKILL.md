@@ -41,15 +41,10 @@ import { DependencyService } from '../dependency/dependency.service';
 describe('ServiceName', () => {
   let service: ServiceName;
   let documentModel: Model<DocumentDocument>;
-  let dependencyService: DependencyService;
+  let dependencyServiceA: DependencyServiceA;
+  let dependencyServiceB: DependencyServiceB;
 
-  const mockLogger = {
-    log: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-    debug: jest.fn(),
-    verbose: jest.fn(),
-  };
+  const mockLogger = { log: jest.fn(), warn: jest.fn(), error: jest.fn(), debug: jest.fn(), verbose: jest.fn() };
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -60,29 +55,32 @@ describe('ServiceName', () => {
         {
           provide: getModelToken(Document.name),
           useValue: {
-            // Include jest.fn() for every model method the service calls
+            // include jest.fn() for every model method the service calls
             findById: jest.fn(),
             findOne: jest.fn(),
             find: jest.fn(),
           },
         },
         {
-          provide: DependencyService,
+          provide: DependencyServiceA,
           useValue: {
-            // Include jest.fn() for every service method that will be spied on
-            findByUserId: jest.fn(),
-            findById: jest.fn(),
-            create: jest.fn(),
+            // include jest.fn() for every method that will be spied on
+            methodA: jest.fn(),
+            methodB: jest.fn(),
           },
+        },
+        {
+          provide: DependencyServiceB,
+          useValue: { methodC: jest.fn() },
         },
       ],
     }).compile();
 
     service = module.get<ServiceName>(ServiceName);
     documentModel = module.get(getModelToken(Document.name));
-    dependencyService = module.get<DependencyService>(DependencyService);
+    dependencyServiceA = module.get<DependencyServiceA>(DependencyServiceA);
+    dependencyServiceB = module.get<DependencyServiceB>(DependencyServiceB);
 
-    // Logger is readonly; override via Object.defineProperty
     Object.defineProperty(service, 'logger', { value: mockLogger });
   });
 
@@ -91,6 +89,8 @@ describe('ServiceName', () => {
   });
 });
 ```
+
+> **Rule:** Declare a `let` variable for every injected dependency — models and services alike — at the `describe` scope, and retrieve each one via `module.get()` in `beforeEach`, even if not every test uses it. This ensures `jest.spyOn` always targets the exact instance the service is using.
 
 ## Test Organization
 
@@ -163,18 +163,27 @@ jest.spyOn(documentModel, 'find').mockReturnValue({
 } as any);
 ```
 
-### Model constructor (`new this.model()`)
+### Mocking document creation
+
+**When the service uses `model.create()`:**
+```typescript
+jest.spyOn(documentModel, 'create').mockResolvedValue(mockDoc as any);
+```
+
+**When the service uses `new this.model() + .save()`:**
+
+Because `@InjectModel` properties are `private readonly`, direct reassignment (`service['documentModel'] = MockModel`) produces TS2540. Cast through `any` on the left:
 ```typescript
 const mockDocInstance = {
   _id: new Types.ObjectId(),
-  status: 'PENDING',
+  field: value,
   save: jest.fn().mockResolvedValue(undefined),
 };
 const MockModel = jest.fn().mockImplementation(() => mockDocInstance);
-service['documentModel'] = MockModel as any;
+(service as any)['documentModel'] = MockModel;
 ```
 
-Prefer asserting on the returned document's shape rather than that `new Model()` or `.save()` were called — those are internal mechanics. If the method returns the created document, assert on it. Asserting `expect(MockModel).toHaveBeenCalled()` is a last resort when there is no return value to assert on.
+Prefer asserting on the returned document's shape rather than that `new Model()` or `.save()` were called.
 
 ## Assertions
 
@@ -198,10 +207,10 @@ expect(mockLogger.log).toHaveBeenCalledWith(
   expect.objectContaining({ key: value })
 );
 
-// Logging — failure (error.stack + context)
+// Logging — failure (error object + context)
 expect(mockLogger.error).toHaveBeenCalledWith(
   'Error message',
-  expect.any(String),
+  expect.any(Error),
   expect.objectContaining({ contextKey: contextValue })
 );
 ```
