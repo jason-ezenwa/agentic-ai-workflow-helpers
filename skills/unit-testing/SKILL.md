@@ -408,7 +408,7 @@ describe('createCustomerOrder', () => {
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         expect.any(String),
-        expect.any(String),
+        expect.any(Error),
         expect.objectContaining({ userId })
       );
     });
