@@ -71,13 +71,11 @@ For each subagent, provide:
 
 **Do not commit during subagent work.** Subagents implement and return results. Review their output, apply any corrections, then commit everything together after verification.
 
----
-
-Split implementation by file type:
+#### Implementation Approach by File Type
 
 **Backend service files and utility functions** — always implement these yourself, never delegate to a subagent. Read and follow the `tdd` skill before writing any implementation.
 
-**Everything else** (DTOs, models, resolvers, config, pages, components, etc.) — implement directly, file-by-file, following the codebase's existing patterns (e.g. Service repository pattern, UI component library).
+**Everything else** (DTOs, models, resolvers, config, pages, components, etc.) — implement directly, file-by-file, following the codebase's existing patterns. These files can be delegated to subagents if parallelising.
 
 ### 3. Verification (The "Build" Check)
 **CRITICAL**: You must ensure the application builds successfully after your changes.
