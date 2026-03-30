@@ -2,8 +2,6 @@
 
 You will receive a local URL, Figma node IDs, frame dimensions, and a description of what to validate.
 
-> **Tooling:** Prefer computer use if available. Fall back to Playwright MCP otherwise. All steps apply to either.
-
 ## Process
 
 ### 1. Set Up the Browser

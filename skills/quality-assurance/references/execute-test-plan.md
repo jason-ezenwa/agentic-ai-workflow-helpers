@@ -2,8 +2,6 @@
 
 You will receive a feature description, a test plan with scenarios and expected outcomes, and an entry point URL or API base URL.
 
-> **Tooling:** Prefer computer use if available. Fall back to Playwright MCP otherwise. All steps apply to either.
-
 ## Process
 
 ### 1. Orient
