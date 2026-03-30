@@ -12,7 +12,9 @@ This skill guides you through implementing a feature defined in a Technical Spec
 ### 0. Branch Setup (Before Any Code Changes)
 **CRITICAL**: All work must happen on a dedicated branch. Never commit implementation work directly to a base branch.
 
-1. **Check working tree**: Run `git status` first. If there are uncommitted changes, stop and tell the user what is dirty, then ask whether to stash them or abort. Never silently proceed with a dirty working tree.
+1. **Check working tree**: Run `git status` first. If there are uncommitted changes:
+   - **If creating a new branch** (step 3 will show the branch doesn't exist): require a clean tree before checking out and pulling the base branch. Tell the user what is dirty and ask whether to stash those changes or abort.
+   - **If continuing on an existing branch** (step 3 will show the branch exists): inspect whether the dirty files overlap with the task at hand. If they do, ask the user how to proceed. If they are unrelated, continue without touching them. Never silently revert changes you didn't make.
 
 2. **Derive expected branch name**: Slugify the spec filename or task description into kebab-case. Choose a prefix that reflects the type of change:
    - New feature → `feat/`
@@ -56,18 +58,33 @@ This skill guides you through implementing a feature defined in a Technical Spec
 
 ### 2. Implementation
 
-Split implementation by file type:
+#### Parallelisation
 
-**Backend service files and utility functions** — **STOP before writing any implementation.** Read and follow the `tdd` skill. Do not write a single line of implementation until the first failing test exists and you have run the project's test script (check `package.json` scripts) to confirm it is RED. The implementation file must not exist until a test requires it.
+Before writing any code, read the spec and identify independent work streams — logical units of work that don't depend on each other at compile time. Both backend streams (service, repository, module) and frontend streams (components, pages, hooks) are valid candidates.
 
-**Everything else** (DTOs, models, resolvers, config, pages, components, etc.) — implement directly, file-by-file, following the codebase's existing patterns (e.g. Service repository pattern, UI component library).
+**Shared dependencies first**: any file that other streams will import (DTOs, types, base components, constants) must be implemented in the main session before parallel work begins.
+
+Once shared dependencies exist, delegate independent streams to subagents — up to a maximum of 3. Do not always spin up 3; use as many as the work genuinely calls for. Parallelise only if there are 3+ logically independent work streams that are self-contained enough to implement without constant iteration between streams. If unsure or the spec is small, stick with sequential implementation in the main session.
+
+For each subagent, provide:
+- The path to the spec file so it can read the full context itself
+- The specific files it is responsible for
+- A brief note on its role in the overall implementation (e.g. "you are implementing the backend service layer; the DTOs it depends on are already in place at `src/dto/foo.dto.ts`")
+
+**Do not commit during subagent work.** Subagents implement and return results. Review their output, apply any corrections, then commit everything together after verification.
+
+#### Implementation Approach by File Type
+
+**Backend service files and utility functions** — do not delegate to a subagent. These must follow the `tdd` skill (RED→GREEN→REFACTOR), which requires close iteration and is not suitable for parallel work. Implement them yourself in the main session.
+
+**Everything else** (DTOs, models, resolvers, config, pages, components, etc.) — implement directly, file-by-file, following the codebase's existing patterns. These files can be delegated to subagents if parallelising.
 
 ### 3. Verification (The "Build" Check)
 **CRITICAL**: You must ensure the application builds successfully after your changes.
 1.  **Determine the build command**: Check `package.json` scripts first. Look for `build`, `type-check`, or `typecheck` in that order. Use the first one found. Only fall back to running `tsc` directly if none exist.
 2.  **Run it**: Execute the command found above.
 3.  **Fix Errors**: If the build fails, you **MUST** fix the errors immediately. Do not proceed until the build is clean.
-4.  **Fix Lints**: For lint fixes, ensure you do them yourself, not with lint commands, to avoid modification of files that are not related to the spec.
+4.  **Fix Lints**: For lint fixes, fix them manually — do not run `npm lint --fix` or similar automation. This ensures only files in the spec are touched.
 
 ### 4. Self-Review (The "Guardrails" Check)
 Before communicating completion to the user, delegate the self-review to a **sub-agent** using the `code-review` skill. Using a sub-agent avoids bias from the implementing agent reviewing its own work.
@@ -104,7 +121,7 @@ Only once the build is clean and the self-review passes:
    ```bash
    gh pr create \
      --base <base-branch> \
-     --title "<spec title>" \
+     --title "<type>(<optional scope>): <short description>" \
      --body "$(cat <<'EOF'
    ## Summary
    <Goals from the spec>
@@ -120,6 +137,8 @@ Only once the build is clean and the self-review passes:
    EOF
    )"
    ```
+
+   Examples of PR titles: `feat(onboarding): add contractor onboarding flow`, `fix(invoice): correct invoice rounding logic`, `docs: update API usage guide`
 
 4. **Capture the PR URL** from the output.
 
