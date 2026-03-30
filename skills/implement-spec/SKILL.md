@@ -56,9 +56,26 @@ This skill guides you through implementing a feature defined in a Technical Spec
 
 ### 2. Implementation
 
+#### Parallelisation
+
+Before writing any code, read the spec and identify independent work streams — logical units of work that don't depend on each other at compile time. Both backend streams (service, repository, module) and frontend streams (components, pages, hooks) are valid candidates.
+
+**Shared dependencies first**: any file that other streams will import (DTOs, types, base components, constants) must be implemented in the main session before parallel work begins.
+
+Once shared dependencies exist, delegate independent streams to subagents — up to a maximum of 3. Do not always spin up 3; use as many as the work genuinely calls for. If the spec touches only 1–3 files total, skip parallelisation — the overhead isn't worth it.
+
+For each subagent, provide:
+- The path to the spec file so it can read the full context itself
+- The specific files it is responsible for
+- A brief note on its role in the overall implementation (e.g. "you are implementing the backend service layer; the DTOs it depends on are already in place at `src/dto/foo.dto.ts`")
+
+**Do not commit during subagent work.** Subagents implement and return results. Review their output, apply any corrections, then commit everything together after verification.
+
+---
+
 Split implementation by file type:
 
-**Backend service files and utility functions** — **STOP before writing any implementation.** Read and follow the `tdd` skill. Do not write a single line of implementation until the first failing test exists and you have run the project's test script (check `package.json` scripts) to confirm it is RED. The implementation file must not exist until a test requires it.
+**Backend service files and utility functions** — always implement these yourself, never delegate to a subagent. Read and follow the `tdd` skill before writing any implementation.
 
 **Everything else** (DTOs, models, resolvers, config, pages, components, etc.) — implement directly, file-by-file, following the codebase's existing patterns (e.g. Service repository pattern, UI component library).
 
