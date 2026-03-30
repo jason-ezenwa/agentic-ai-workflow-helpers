@@ -2,6 +2,8 @@
 
 You will receive a feature description, a test plan with scenarios and expected outcomes, and an entry point URL or API base URL.
 
+> **Tooling:** Prefer computer use if available. Fall back to Playwright MCP otherwise. All steps apply to either.
+
 ## Process
 
 ### 1. Orient
@@ -32,12 +34,7 @@ Save any screenshots taken during execution to `/tmp/<feature-slug>/`. Create th
 
 ### 5. Check for Errors
 
-After exercising the feature, review console output and network activity for unexpected failures:
-
-```
-browser_console_messages()
-browser_network_requests()
-```
+After exercising the feature, review console output and network activity for unexpected failures.
 
 ## Output
 

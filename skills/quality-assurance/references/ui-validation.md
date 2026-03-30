@@ -2,41 +2,25 @@
 
 You will receive a local URL, Figma node IDs, frame dimensions, and a description of what to validate.
 
+> **Tooling:** Prefer computer use if available. Fall back to Playwright MCP otherwise. All steps apply to either.
+
 ## Process
 
 ### 1. Set Up the Browser
 
-Resize the browser to match the Figma frame dimensions provided:
-
-```
-browser_resize(width, height)
-```
+Resize the browser to match the Figma frame dimensions provided.
 
 ### 2. Navigate and Orient
 
-Navigate to the provided URL:
-
-```
-browser_navigate(url)
-```
-
-Take an initial screenshot and accessibility snapshot to understand the current state of the UI before validating.
+Navigate to the provided URL and take an initial screenshot to understand the current state of the UI before validating.
 
 ### 3. Wait for Content
 
-If the UI has dynamic content (loading states, animations, async data), wait for it to settle before capturing:
-
-```
-browser_wait_for(selector or condition)
-```
+If the UI has dynamic content (loading states, animations, async data), wait for it to settle before capturing.
 
 ### 4. Capture the Implementation Screenshot
 
-```
-browser_take_screenshot()
-```
-
-For pages with multiple sections, navigate to each section individually (e.g. via URL hash) and capture separately. This makes comparison more manageable.
+Take a screenshot of the current state. For pages with multiple sections, navigate to each section individually (e.g. via URL hash) and capture separately. This makes comparison more manageable.
 
 ### 5. Fetch the Figma Reference
 
@@ -54,24 +38,11 @@ Work through each criterion provided. For each one, check:
 
 ### 7. Validate Interactive States
 
-Drive interactions to reach states that need validating — hover, focus, active, disabled, open/closed modals, form errors, etc.:
-
-```
-browser_hover(selector)
-browser_click(selector)
-browser_fill_form(...)
-```
-
-Capture a screenshot at each meaningful interaction state.
+Drive interactions to reach states that need validating — hover, focus, active, disabled, open/closed modals, form errors, etc. Capture a screenshot at each meaningful interaction state.
 
 ### 8. Check for Errors
 
-After exercising the UI, review console output and network activity for unexpected failures:
-
-```
-browser_console_messages()
-browser_network_requests()
-```
+After exercising the UI, review console output and network activity for unexpected failures.
 
 ## Output
 
