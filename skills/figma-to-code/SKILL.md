@@ -1,11 +1,11 @@
 ---
 name: figma-to-code
-description: Converts Figma designs to production-ready code using the Figma MCP server. Saves a structured spec artifact and implements with 1:1 visual fidelity. Use when implementing UI from Figma files, when user mentions "implement design", "generate code", "implement component", "build Figma design", provides Figma URLs, or asks to build components matching Figma specs.
+description: Converts Figma designs to production-ready code using the Figma MCP server. Implements with 1:1 visual fidelity and validates against the original design through a QA loop. Use when implementing UI from Figma files, when user mentions "implement design", "generate code", "implement component", "build Figma design", provides Figma URLs, or asks to build components matching Figma specs.
 ---
 
 # Figma to Code Conversion
 
-This skill guides the process of extracting design context from Figma using the Figma MCP server and converting it into production-ready code, while maintaining a structured spec record of the outputs.
+This skill guides the process of extracting design context from Figma using the Figma MCP server and converting it into production-ready code.
 
 **Follow these steps in order. Do not skip steps.**
 
@@ -83,49 +83,7 @@ For any images, icons, or SVGs returned by the Figma MCP server, download them i
 
 ---
 
-## Step 5: Save Spec File
-
-Before writing any code, save a structured spec to `figma-outputs/` at the root of the workspace.
-
-- **Target directory:** `figma-outputs/` (create it if it doesn't exist)
-- **Filename format:** `<component-or-page-name>-<node-id>.md` (e.g., `figma-outputs/event-details-205-57932.md`)
-
-### Spec Template
-
-```markdown
-# Figma Design Spec: [Component/Page Name]
-
-**Source**: [Figma URL — or "Figma Desktop selection" if no URL was provided]
-**Node ID**: [Node ID]
-**Date**: [YYYY-MM-DD]
-
----
-
-## Design Summary
-[Brief description of the component or page]
-
-## Assets & Resources
-- **Images**: [List of images]
-- **Icons**: [List of icons]
-- **Fonts**: [Font families used]
-- **Figma Frames**: [fileKey and nodeId for each frame, e.g. `fileKey: abc123, nodeId: 573:158941`]
-
-## Code Connect Status
-[Did we use Code Connect? Yes / No / Skipped — reason]
-
-## Raw/Processed Context
-[Insert pertinent JSON or code snippets from the MCP tool output.
-If too large, summarize the structure or key style tokens.]
-
-## Implementation Plan
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
-```
-
----
-
-## Step 6: Implement the Code
+## Step 5: Implement the Code
 
 Translate the Figma output into the project's framework, styles, and conventions.
 
@@ -143,19 +101,19 @@ Translate the Figma output into the project's framework, styles, and conventions
 
 ---
 
-## Step 7: Validate and Fix Visual Discrepancies
+## Step 6: Validate and Fix Visual Discrepancies
 
 Delegate this step to a **QA agent**. Do not perform browser validation yourself.
 
 Provide the QA agent with:
 - The **local URL** of the implemented component or page
-- The **Figma fileKey and nodeId(s)** recorded in the spec (Step 5)
+- The **Figma fileKey and nodeId(s)** from Step 1
 - The **Figma frame dimensions** (width × height) from the design context
 - A description of what to validate: layout, typography, colors, interactive states, responsive behaviour, and assets
 
 The QA agent will return a structured validation report with a pass/fail verdict per criterion and screenshot evidence.
 
-### 7b: Fix Discrepancies
+### 6b: Fix Discrepancies
 
 For each failure in the report:
 
@@ -165,7 +123,7 @@ For each failure in the report:
 
 Once fixes are applied, **delegate to the QA agent again** to re-validate. Repeat until the report is a full pass.
 
-### 7c: Final Validation Checklist
+### 6c: Final Validation Checklist
 
 Only mark complete when the QA report shows ALL passing:
 
@@ -188,5 +146,5 @@ Only mark complete when the QA report shows ALL passing:
 | Assets not loading | `localhost` URLs being modified | Use the MCP-provided `localhost` URLs directly without modification |
 | Design tokens differ from Figma | Project tokens have different values | Prefer project tokens for consistency; adjust spacing/sizing minimally to match visuals |
 | Code Connect script appears | Component mapping required | Stop and follow the script exactly; do not proceed until resolved or skipped |
-| No Figma reference for comparison | fileKey/nodeId not recorded | Record fileKey and nodeId in the spec (Step 5) — pass them to the QA agent when delegating Step 7 |
+| No Figma reference for comparison | fileKey/nodeId not captured | Note the fileKey and nodeId from Step 1 — pass them to the QA agent when delegating Step 6 |
 | Can't screenshot component in isolation | No dedicated route | Create a temporary test route to isolate the component, then provide that URL to Eren |
