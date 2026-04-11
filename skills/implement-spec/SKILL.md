@@ -117,7 +117,7 @@ Only once the build is clean and the code review passes:
    gh pr view <branch-name> --json url -q .url
    ```
    - **If a PR exists**: skip creation. The new commit is already on the branch and the existing PR is updated. Capture the existing PR URL.
-   - **If no PR exists**: create one using the GitHub CLI. The body must include the spec summary, a list of files changed, the self-review report, and the test plan (if present in the spec):
+   - **If no PR exists**: create one using the GitHub CLI. The body must include the spec summary, a list of files changed, the code review report, and the test plan (if present in the spec):
    ```bash
    gh pr create \
      --base <base-branch> \
