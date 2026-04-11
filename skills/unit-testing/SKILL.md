@@ -180,8 +180,12 @@ const mockDocInstance = {
   save: jest.fn().mockResolvedValue(undefined),
 };
 const MockModel = jest.fn().mockImplementation(() => mockDocInstance);
-(service as any)['documentModel'] = MockModel;
+(service as any)['documentModel'] = MockModel; // `as any` required — readonly blocks bracket assignment
 ```
+
+### Accessing private fields
+
+Prefer `service['field']` over `(service as any).field` — bracket notation bypasses `private` without discarding type information. Only use `(service as any)` when TypeScript actively prevents the operation, such as assigning to a `readonly` field.
 
 Prefer asserting on the returned document's shape rather than that `new Model()` or `.save()` were called.
 
