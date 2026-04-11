@@ -36,6 +36,8 @@ Identify the dependency order across all issues before writing any files. Schema
 
 ## Step 3 — Write the issue files
 
+**The implementer will read the spec.** Issue files exist to carve out a clear boundary — not to rewrite the source document. Keep every section as short as possible. If something is already explained in the spec, point to it; do not repeat it.
+
 For each issue, create a file at:
 
 ```
@@ -55,7 +57,7 @@ Each file must follow this structure exactly:
 
 ## Summary
 
-<One paragraph describing what this issue builds and why it matters in the context of the overall system.>
+<One sentence naming what this issue builds.>
 
 ## Blockers
 
@@ -65,7 +67,7 @@ _(omit this section if there are no blockers)_
 
 ## Scope
 
-<Detailed breakdown of everything to implement. Use subsections per file or component. List method signatures, route tables, field definitions, and behaviour notes. Be specific enough that an engineer can implement without reading the source plan.>
+<Concise breakdown of what to implement. Use short bullet points per file or component — name the method, field, or route and state what it does in one line. Do not reproduce content already in the spec; point to the relevant section instead. The implementer will read the spec. This section exists to draw a clear boundary around the issue, not rewrite the source document.>
 
 ## Files to create/modify
 
