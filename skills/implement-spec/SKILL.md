@@ -1,11 +1,11 @@
 ---
 name: implement-spec
-description: Implements a feature based on a provided technical specification, ensuring build stability and strict adherence to the spec through self-review. Creates a feature branch, commits changes, and raises a PR on completion.
+description: Implements a feature based on a provided technical specification, ensuring build stability and strict adherence to the spec through a sub-agent code review. Creates a feature branch, commits changes, and raises a PR on completion.
 ---
 
 # Implement Spec Skill
 
-This skill guides you through implementing a feature defined in a Technical Specification file (usually in `specs/`). It mandates a strict workflow of Branch Setup -> Planning -> Implementation -> Verification -> Self-Review -> PR Creation.
+This skill guides you through implementing a feature defined in a Technical Specification file (usually in `specs/`). It mandates a strict workflow of Branch Setup -> Planning -> Implementation -> Verification -> Code Review -> PR Creation.
 
 ## Workflow
 
@@ -75,7 +75,7 @@ For each subagent, provide:
 
 #### Implementation Approach by File Type
 
-**Backend service files and utility functions** — do not delegate to a subagent. These must follow the `tdd` skill (RED→GREEN→REFACTOR), which requires close iteration and is not suitable for parallel work. Implement them yourself in the main session.
+**Backend service files and utility functions** — do not delegate to a subagent. These require close iteration and are not suitable for parallel work. Implement them yourself in the main session.
 
 **Everything else** (DTOs, models, resolvers, config, pages, components, etc.) — implement directly, file-by-file, following the codebase's existing patterns. These files can be delegated to subagents if parallelising.
 
@@ -86,10 +86,10 @@ For each subagent, provide:
 3.  **Fix Errors**: If the build fails, you **MUST** fix the errors immediately. Do not proceed until the build is clean.
 4.  **Fix Lints**: For lint fixes, fix them manually — do not run `npm lint --fix` or similar automation. This ensures only files in the spec are touched.
 
-### 4. Self-Review (The "Guardrails" Check)
-Before communicating completion to the user, delegate the self-review to a **sub-agent** using the `code-review` skill. Using a sub-agent avoids bias from the implementing agent reviewing its own work.
+### 4. Code Review (The "Guardrails" Check)
+Before communicating completion to the user, delegate a code review to a **sub-agent**. Using a sub-agent avoids bias from the implementing agent reviewing its own work.
 
-Pass the sub-agent the list of files changed and the spec content. It runs `code-review` and returns a report. Using the report, ask yourself:
+Pass the sub-agent the list of files changed and the spec content. It returns a report. Using the report, ask yourself:
 1.  **Completeness**: Did I implement every endpoint defined in "API Design"?
 2.  **Compliance**: Did I meet all "Goals"? Did I avoid all "Non-Goals"?
 3.  **Quality**: Are there any linting errors or obvious bugs?
@@ -97,8 +97,8 @@ Pass the sub-agent the list of files changed and the spec content. It runs `code
 
 > **If you find discrepancies:** Fix them now. Do not ask the user for permission to fix bugs you introduced. Once fixes are applied, **spawn the sub-agent one more time** to confirm the issues are resolved. If issues persist after this second pass, escalate to the user rather than looping further.
 
-### 5. PR Creation (After Clean Self-Review)
-Only once the build is clean and the self-review passes:
+### 5. PR Creation (After Clean Code Review)
+Only once the build is clean and the code review passes:
 
 1. **Commit** following Conventional Commits format. The type must match the branch prefix:
    ```bash
@@ -129,8 +129,8 @@ Only once the build is clean and the self-review passes:
    ## Changes Made
    <Bullet list of files/modules touched>
 
-   ## Self-Review Report
-   <Output from code-review skill>
+   ## Code Review Report
+   <Output from the code review sub-agent>
 
    ## Test Plan
    <From the spec's verification section, if present>
@@ -149,10 +149,10 @@ Only when you are **confident** that:
 1.  The code is implemented.
 2.  The app builds without errors.
 3.  The implementation matches the Spec.
-4.  A sub-agent has conducted a self-review using the `code-review` skill.
+4.  A sub-agent has conducted a code review.
 5.  A PR has been raised (or the user has been notified of the branch if `gh` is unavailable).
 
 Then notify the user with:
-- The **self-review report** (findings + what was fixed).
+- The **code review report** (findings + what was fixed).
 - The **PR URL** for them to review.
 - Which **base branch** the PR targets.
