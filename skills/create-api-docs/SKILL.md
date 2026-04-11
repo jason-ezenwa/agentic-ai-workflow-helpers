@@ -11,8 +11,8 @@ This skill guides the creation of API documentation using a standardized format 
 
 1.  **Analyze the API**: Review the controller, service, and DTO files for the feature to understand all endpoints, request/response shapes, authentication requirements, and error cases.
 2.  **Determine File Path**: The API documentation must be saved in the `docs` folder at the root of the workspace.
-    -   Target Directory: `docs/` (Create this directory if it doesn't exist)
-    -   Filename Format: `<feature-name>-api.md` (e.g., `docs/essay-api.md`, `docs/user-api.md`)
+    -   Target Directory: `docs/api/` (Create this directory if it doesn't exist)
+    -   Filename Format: `<feature-name>-api.md` (e.g., `docs/api/essay-api.md`, `docs/api/user-api.md`)
 3.  **Generate Content**: Use the template below to structure the document.
     -   **Complete Coverage**: Document ALL endpoints for the feature, grouped logically by functionality.
     -   **Realistic Examples**: Use realistic, domain-appropriate example data in JSON payloads.
