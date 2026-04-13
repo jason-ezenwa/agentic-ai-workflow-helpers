@@ -18,7 +18,7 @@ If the UI has dynamic content (loading states, animations, async data), wait for
 
 ### 4. Capture the Implementation Screenshot
 
-Take a screenshot of the current state. For pages with multiple sections, navigate to each section individually (e.g. via URL hash) and capture separately. This makes comparison more manageable.
+Take a screenshot of the current state. For pages with multiple sections, navigate to each section individually (e.g. via URL hash) and capture separately. This makes comparison more manageable. Save any screenshots taken during execution to `/tmp/<feature-slug>/`. Create the directory if it does not exist. Use descriptive filenames that identify the scenario and step (e.g., `checkout-step2-payment-form.png`).
 
 ### 5. Fetch the Figma Reference
 
