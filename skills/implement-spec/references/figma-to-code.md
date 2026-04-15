@@ -1,11 +1,4 @@
----
-name: figma-to-code
-description: Converts Figma designs to production-ready code using the Figma MCP server. Implements with 1:1 visual fidelity and validates against the original design through a QA loop. Use when implementing UI from Figma files, when user mentions "implement design", "generate code", "implement component", "build Figma design", provides Figma URLs, or asks to build components matching Figma specs.
----
-
-# Figma to Code Conversion
-
-This skill guides the process of extracting design context from Figma using the Figma MCP server and converting it into production-ready code.
+# Figma to Code
 
 **Follow these steps in order. Do not skip steps.**
 

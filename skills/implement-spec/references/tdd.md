@@ -1,8 +1,3 @@
----
-name: tdd
-description: Test-driven development for backend service and utility code. Drives implementation through a RED→GREEN→REFACTOR cycle, one behaviour at a time.
----
-
 # Test-Driven Development
 
 ## Philosophy
@@ -11,7 +6,7 @@ Write one test for one behaviour → make it pass with minimal code → repeat. 
 
 The unit under test is a service method or utility function. Its "interface" is its inputs, return values, and thrown errors. Test those — not which internal methods were called.
 
-For test setup patterns, tooling, and mocking conventions, **use the unit testing skill available in this project**.
+For test setup patterns, tooling, and mocking conventions, **use the unit testing skill**.
 
 ## Scope
 
