@@ -21,14 +21,20 @@ Then review the diff output instead of reading files directly.
 
 ---
 
-## Before Reviewing: Check Project Rules
+## Before Reviewing: Load Rules
 
-Look for a rules directory in the project. Common locations:
+You have two sources of rules — apply both, with project rules taking priority where they overlap.
+
+**1. Global rules** — already available to you. Use them as the baseline.
+
+**2. Project rules** — look for a rules directory in the project. Common locations:
 - `.agent/rules/`
 - `.claude/rules/`
 - `.cursor/rules/`
 
-If one exists, **list the filenames only** first. Based on the filenames and the files being reviewed, determine which rules are likely relevant — do not read any rule file yet. Then read only the rule files whose names suggest they apply to the current context. For example, a rule named `database-index-creation.md` is irrelevant for a purely frontend change. Use judgment; never load all rules up front.
+If a project rules directory exists, **list the filenames only** first. Based on the filenames and the files being reviewed, determine which rules are likely relevant — do not read any rule file yet. Then read only the rule files whose names suggest they apply to the current context. For example, a rule named `database-index-creation.md` is irrelevant for a purely frontend change. Use judgment; never load all rules up front.
+
+If no project rules directory exists, proceed with global rules only.
 
 ---
 
@@ -43,7 +49,7 @@ For each file or diff being reviewed, check:
 5. **Type safety**: Are `any` types introduced without justification? Are type assertions masking real errors?
 6. **Dead code**: Are there unused imports, variables, or unreachable branches introduced by this change?
 7. **Security**: Are there hardcoded secrets? Are unsanitised inputs passed to queries or shell commands?
-8. **Project rules**: Does the code comply with the applicable rules identified above?
+8. **Rules compliance**: Does the code comply with the applicable global and project rules identified above?
 
 ---
 

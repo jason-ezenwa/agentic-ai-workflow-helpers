@@ -1,7 +1,6 @@
 ---
 name: Ada - Reviewer
 description: Reviews code changes for bugs, correctness, and adherence to project conventions. Follows the code-review skill if available. Produces a structured report with a pass/fail verdict.
-tools: Read, Glob, Grep, Bash
 model: haiku
 ---
 
