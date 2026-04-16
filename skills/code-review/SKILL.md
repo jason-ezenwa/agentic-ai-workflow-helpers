@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Reviews code changes for bugs, style issues, and best practices. Works on local files or a GitHub PR. Produces a structured report with severity levels and a pass/fail verdict.
+description: Reviews code changes for correctness, quality, security, and rule compliance. Works on local files or a GitHub PR. Produces a structured report with severity levels and a pass/fail verdict.
 ---
 
 # Code Review Skill
@@ -44,14 +44,15 @@ For each file or diff being reviewed, check:
 
 1. **Correctness**: Does the code do what it's supposed to?
 2. **Edge cases**: Are error conditions and boundary inputs handled?
-3. **Style**: Does it follow project conventions?
-4. **Performance**: Are there obvious inefficiencies?
-5. **Type safety**: Are `any` types introduced without justification? Are type assertions masking real errors?
-6. **Dead code**: Are there unused imports, variables, or unreachable branches introduced by this change?
-7. **Security**: Are there hardcoded secrets? Are unsanitised inputs passed to queries or shell commands?
-8. **Rules compliance**: Does the code comply with the applicable global and project rules identified above?
+3. **Security**: Are there hardcoded secrets? Are unsanitised inputs passed to queries or shell commands?
+4. **Type safety**: Are `any` types introduced without justification? Are type assertions masking real errors?
+5. **Performance**: Are there obvious inefficiencies?
+6. **Rules compliance**: Does the code comply with the applicable global and project rules identified above?
+7. **Style**: Does the code follow the structural and organisational conventions of the codebase — module arrangement, file structure, naming patterns? For UI changes, does the new UI match the visual language of the surrounding product — spacing, typography, component usage, design system tokens, and page layout patterns consistent with the rest of the product?
+8. **Dead code**: Are there unused imports, variables, or unreachable branches introduced by this change?
 9. **Unnecessary abstraction**: Are there helpers, utilities, or layers introduced for a single use case? Is complexity justified by the actual problem, or speculative?
-10. **Code cleanliness**: Are there leftover debug statements, commented-out code, or redundant logic that shouldn't be in the final change? Are variable names descriptive and consistent with codebase conventions? Are functions focused and appropriately sized, or doing too much? Is the module/function hierarchy clear and navigable? Are magic numbers or strings used where named constants should be?
+10. **Test quality**: If tests are present — are they asserting on outcomes (return values, thrown errors) rather than implementation details (which methods were called, in what order)? Do they cover real edge cases rather than just the happy path? Do test names describe observable behaviour? Would these tests catch a regression if the implementation changed?
+11. **Code cleanliness**: Are there leftover debug statements, commented-out code, or redundant logic that shouldn't be in the final change? Are variable names descriptive and consistent with codebase conventions? Are functions focused and appropriately sized, or doing too much? Is the module/function hierarchy clear and navigable? Are magic numbers or strings used where named constants should be?
 
 ---
 
