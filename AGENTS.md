@@ -8,7 +8,7 @@
 
 Always spawn the appropriate subagent rather than handling inline. When delegating, provide the task and relevant file paths only — do not specify how the agent should approach its work, which rules to apply, or which patterns to follow. Agents are already primed with their own instructions and will discover what they need from the workspace.
 
-## Validation commands
+## Validating Work Done
 
 When verifying work, run build and test commands sequentially — never in parallel. Complete each command and review its output before starting the next. The order is: build first, then each test suite one at a time.
 

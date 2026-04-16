@@ -13,4 +13,4 @@ The `developer_instructions` field in each `.toml` file is the equivalent of the
 
 The `.md` frontmatter fields (`name`, `description`) map directly to the TOML `name` and `description` fields — keep these identical.
 
-**`model:`** in the `.md` frontmatter maps to the TOML `model` field, but uses Codex model names instead of Claude model names. `model: inherit` in markdown means omit the `model` field in TOML so Codex uses the session default.
+**`model:`** in the `.md` frontmatter uses Claude model names, while the TOML `model` field uses Codex model names. `model: inherit` in markdown means omit the `model` field in TOML so Codex uses the session default.
