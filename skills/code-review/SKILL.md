@@ -50,6 +50,8 @@ For each file or diff being reviewed, check:
 6. **Dead code**: Are there unused imports, variables, or unreachable branches introduced by this change?
 7. **Security**: Are there hardcoded secrets? Are unsanitised inputs passed to queries or shell commands?
 8. **Rules compliance**: Does the code comply with the applicable global and project rules identified above?
+9. **Unnecessary abstraction**: Are there helpers, utilities, or layers introduced for a single use case? Is complexity justified by the actual problem, or speculative?
+10. **Code cleanliness**: Are there leftover debug statements, commented-out code, or redundant logic that shouldn't be in the final change? Are variable names descriptive and consistent with codebase conventions? Are functions focused and appropriately sized, or doing too much? Is the module/function hierarchy clear and navigable? Are magic numbers or strings used where named constants should be?
 
 ---
 
