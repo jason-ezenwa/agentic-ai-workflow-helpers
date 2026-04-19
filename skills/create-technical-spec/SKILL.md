@@ -46,7 +46,7 @@ Take an existing local spec file and publish it as a GitHub issue. The local fil
 
 **Triggers** — either is sufficient:
 -   **Tokens**: `--promote` appearing in the user's request, typically with a path (e.g. `--promote specs/foo.md`)
--   **Phrases**: "promote this spec to an issue", "create an issue from `specs/<name>.md`", or similar
+-   **Phrases**: "promote this spec to an issue", "promote the spec at `<path>` to an issue", or similar phrasing that explicitly uses "promote"
 
 **Steps**:
 1.  Read the local spec file.
