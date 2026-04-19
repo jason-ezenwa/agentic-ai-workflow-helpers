@@ -10,13 +10,63 @@ This skill guides the creation of technical specification documents using a stan
 ## Instructions
 
 1.  **Analyze the Requirement**: Understand the feature or product being requested.
-2.  **Determine File Path**: The technical spec must be saved in the `specs` folder at the root of the workspace.
-    -   Target Directory: `specs/` (Create this directory if it doesn't exist)
-    -   Filename Format: `<feature-name>.md` (e.g., `specs/user-authentication.md`)
+2.  **Determine Output Mode**: The spec can be written as a local file (default), created directly as a GitHub issue on the current repo, or promoted from an existing local file to a GitHub issue. See **Output Modes** below.
 3.  **Generate Content**: Use the template below to structure the document.
     -   **Flexible Application**: Not every use case requires every section of the template. Use your best judgment to determine which sections are relevant and necessary for the specific task. Omit sections that are not applicable.
     -   **Professional Tone**: Maintain a clear, concise, and professional technical writing style.
-4.  **Save File**: Write the generated content to the target file.
+4.  **Write the Spec**: Save or publish according to the selected mode.
+
+## Output Modes
+
+The skill supports three modes. Detect the mode from the user's request — accept both explicit tokens and natural phrasing. Default to **Local** when no issue-related intent is expressed.
+
+### 1. Local (default)
+The spec is saved as a markdown file in the workspace.
+
+-   **Target Directory**: `specs/` at the root of the workspace (create if missing)
+-   **Filename Format**: `<feature-name>.md` (e.g., `specs/user-authentication.md`)
+
+### 2. Issue (create directly on GitHub)
+Skip the local file and create a GitHub issue on the current repo. Use this when the user wants the spec to be reachable by cloud sessions from the outset.
+
+**Triggers** — either is sufficient:
+-   **Tokens**: `--issue` or `--as-issue` appearing in the user's request
+-   **Phrases**: "as an issue", "as a GitHub issue", "issue-only", "directly as an issue", or similar clear intent that the spec should live *as* an issue from the start (not generated locally first)
+
+**Steps**:
+1.  Confirm the working directory is inside a GitHub repo (`gh repo view`).
+2.  Ensure the `spec` label exists on the repo without overwriting an existing one: `gh label create spec --color 4C47EA --description "technical or product spec that can be picked up by an agent" 2>/dev/null || true`. This creates the label if missing and is a no-op if it already exists (regardless of the existing color or description).
+3.  Generate the spec content using the template.
+4.  Write the body to a tempfile under `/tmp` (e.g. `/tmp/spec-<feature-name>-<timestamp>.md`). `/tmp` is cleared on reboot, so no manual cleanup is required.
+5.  Create the issue: `gh issue create --title "<Feature Name> — Technical Spec" --label spec --body-file /tmp/spec-<feature-name>-<timestamp>.md`.
+6.  Report the issue URL and number back to the user. Do not leave a local file in the workspace.
+
+### 3. Promote (local → issue, keep local as reference)
+Take an existing local spec file and publish it as a GitHub issue. The local file is kept and stamped with the issue number and URL so it can be re-fetched later.
+
+**Triggers** — either is sufficient:
+-   **Tokens**: `--promote` appearing in the user's request, typically with a path (e.g. `--promote specs/foo.md`)
+-   **Phrases**: "promote this spec to an issue", "promote the spec at `<path>` to an issue", or similar phrasing that explicitly uses "promote"
+
+**Steps**:
+1.  Read the local spec file.
+2.  Ensure the `spec` label exists on the repo without overwriting an existing one: `gh label create spec --color 4C47EA --description "technical or product spec that can be picked up by an agent" 2>/dev/null || true`. This creates the label if missing and is a no-op if it already exists (regardless of the existing color or description).
+3.  Create the issue: `gh issue create --title "<Title> — Technical Spec" --label spec --body-file <path-to-local-spec>`. The local spec file itself is used as the body source — no tempfile needed.
+4.  Stamp the local file by inserting an HTML comment at the top of the body (below the title), e.g.:
+
+    ```markdown
+    <!-- github-issue: #42 https://github.com/<owner>/<repo>/issues/42 -->
+    ```
+
+5.  Report the issue URL and confirm the local file has been stamped.
+
+## Editing After Promotion or Issue Creation
+
+Once a spec lives as an issue, treat the **issue body as the source of truth**. Local copies may go stale — that's expected.
+
+-   **Edits**: made directly on the issue (via `gh issue edit <num> --body-file <new>` locally, or through the issue UI in any cloud session).
+-   **Refreshing a local copy**: on explicit user request, re-fetch the issue body with `gh issue view <num> --json body -q .body` and overwrite the local file (preserving the stamp line).
+-   Do **not** attempt automatic bidirectional sync.
 
 ## Technical Spec Template
 
