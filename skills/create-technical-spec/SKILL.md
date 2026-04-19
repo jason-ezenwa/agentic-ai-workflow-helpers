@@ -31,7 +31,7 @@ Skip the local file and create a GitHub issue on the current repo. Use this when
 
 **Triggers** — either is sufficient:
 -   **Tokens**: `--issue` or `--as-issue` appearing in the user's request
--   **Phrases**: "as an issue", "as a GitHub issue", "create an issue for this spec", "issue-only", or similar clear intent
+-   **Phrases**: "as an issue", "as a GitHub issue", "issue-only", "directly as an issue", or similar clear intent that the spec should live *as* an issue from the start (not generated locally first)
 
 **Steps**:
 1.  Confirm the working directory is inside a GitHub repo (`gh repo view`).
