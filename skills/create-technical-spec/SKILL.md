@@ -35,9 +35,11 @@ Skip the local file and create a GitHub issue on the current repo. Use this when
 
 **Steps**:
 1.  Confirm the working directory is inside a GitHub repo (`gh repo view`).
-2.  Generate the spec content using the template.
-3.  Create the issue: `gh issue create --title "<Feature Name> — Technical Spec" --body-file <tempfile>`.
-4.  Report the issue URL and number back to the user. Do not leave a local file behind.
+2.  Ensure the `spec` label exists on the repo: `gh label create spec --color 5319E7 --description "Technical specification" --force` (idempotent).
+3.  Generate the spec content using the template.
+4.  Write the body to a tempfile under `/tmp` (e.g. `/tmp/spec-<feature-name>-<timestamp>.md`). `/tmp` is cleared on reboot, so no manual cleanup is required.
+5.  Create the issue: `gh issue create --title "<Feature Name> — Technical Spec" --label spec --body-file /tmp/spec-<feature-name>-<timestamp>.md`.
+6.  Report the issue URL and number back to the user. Do not leave a local file in the workspace.
 
 ### 3. Promote (local → issue, keep local as reference)
 Take an existing local spec file and publish it as a GitHub issue. The local file is kept and stamped with the issue number and URL so it can be re-fetched later.
@@ -48,14 +50,15 @@ Take an existing local spec file and publish it as a GitHub issue. The local fil
 
 **Steps**:
 1.  Read the local spec file.
-2.  Create the issue: `gh issue create --title "<Title> — Technical Spec" --body-file <path>`.
-3.  Stamp the local file by inserting an HTML comment at the top of the body (below the title), e.g.:
+2.  Ensure the `spec` label exists on the repo: `gh label create spec --color 5319E7 --description "Technical specification" --force` (idempotent).
+3.  Create the issue: `gh issue create --title "<Title> — Technical Spec" --label spec --body-file <path-to-local-spec>`. The local spec file itself is used as the body source — no tempfile needed.
+4.  Stamp the local file by inserting an HTML comment at the top of the body (below the title), e.g.:
 
     ```markdown
     <!-- github-issue: #42 https://github.com/<owner>/<repo>/issues/42 -->
     ```
 
-4.  Report the issue URL and confirm the local file has been stamped.
+5.  Report the issue URL and confirm the local file has been stamped.
 
 ## Editing After Promotion or Issue Creation
 
