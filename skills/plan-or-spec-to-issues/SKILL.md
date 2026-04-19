@@ -30,6 +30,25 @@ The skill has two modes:
 
 ---
 
+## Proposal & Approval (required before any writes)
+
+After decomposing the spec (Step 2 in either mode) and **before writing any files or creating any GitHub issues**, present the proposed decomposition to the user and wait for explicit approval.
+
+The proposal must include, for each planned issue:
+- Its number (or dependency position) and title
+- A one-sentence summary
+- Its blockers (by number/title)
+- The key files or components it will touch
+
+Also surface:
+- The dependency order across the set (a short list or mini graph is fine)
+- Any scope items from the source spec you are deliberately excluding, and why
+- The mode that will be used (Local or Online) and, for Online, the parent issue
+
+Wait for the user to say "approved", "go ahead", "looks good", "proceed", or to send revisions. If they request changes, update the decomposition and re-propose. Do not skip this step even if the decomposition seems obvious — creating issues or files prematurely is costly to undo (especially on GitHub).
+
+---
+
 ## Local Mode
 
 ### Step 1 — Identify the output directory
@@ -53,6 +72,8 @@ Break the plan or spec into discrete, independently implementable units of work.
 Identify the dependency order across all issues before writing any files. Schema and data layer issues come before service issues; service issues come before controller and handler issues.
 
 ### Step 3 — Write the issue files
+
+> **Gate:** Only proceed once the user has approved the proposal (see [Proposal & Approval](#proposal--approval-required-before-any-writes)).
 
 **The implementer will read the spec.** Issue files exist to carve out a clear boundary — not to rewrite the source document. Keep every section as short as possible. If something is already explained in the spec, point to it; do not repeat it.
 
@@ -182,6 +203,8 @@ No local files are written. GitHub's native sub-issue and issue-dependency relat
 Same analysis as local mode Step 2. Identify discrete units of work and their dependency order before creating anything on GitHub. Do this work in memory — do not write scratch files.
 
 ### Step 3 — Create sub-issues in dependency order
+
+> **Gate:** Only proceed once the user has approved the proposal (see [Proposal & Approval](#proposal--approval-required-before-any-writes)). This is especially important in online mode — created GitHub issues can't be cleanly undone, only closed.
 
 For each decomposed issue, in dependency order (earliest dependencies first):
 
