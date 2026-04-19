@@ -1,6 +1,6 @@
 ---
 name: plan-or-spec-to-issues
-description: Breaks down a plan or technical spec into numbered, dependency-ordered issue files ready for implementation.
+description: Breaks down a plan or technical spec into dependency-ordered implementation issues — as local markdown files under docs/issues/, or as GitHub sub-issues of the parent spec issue with native blocking.
 ---
 
 # Plan or Spec to Issues
@@ -202,30 +202,11 @@ No local files are written. GitHub's native sub-issue and issue-dependency relat
 
 Same analysis as local mode Step 2. Identify discrete units of work and their dependency order before creating anything on GitHub. Do this work in memory — do not write scratch files.
 
-### Step 3 — Create sub-issues in dependency order
-
-> **Gate:** Only proceed once the user has approved the proposal (see [Proposal & Approval](#proposal--approval-required-before-any-writes)). This is especially important in online mode — created GitHub issues can't be cleanly undone, only closed.
-
-For each decomposed issue, in dependency order (earliest dependencies first):
-
-1.  Write the issue body to `/tmp/subissue-<slug>-<timestamp>.md`. `/tmp` is self-cleaning on reboot.
-2.  Create the issue:
-    ```bash
-    gh issue create --title "<Title>" --body-file /tmp/subissue-<slug>-<timestamp>.md
-    ```
-    Capture the new issue's number and node ID. Get the ID via:
-    ```bash
-    gh api "/repos/<owner>/<repo>/issues/<number>" --jq .id
-    ```
-3.  Attach as a sub-issue of the parent using the GitHub Sub-Issues API:
-    ```bash
-    gh api -X POST "/repos/<owner>/<repo>/issues/<parent>/sub_issues" -F sub_issue_id=<child_id>
-    ```
-4.  For each blocker (a previously created sub-issue this one depends on), add a blocking relationship using the GitHub Issue Dependencies API. Use `gh api` with the current dependencies endpoint (the agent should verify exact syntax against GitHub's docs at the time of execution; the relationship is "this issue is blocked by <blocker>"). If the API call fails, fall back to adding a `Blocked by #N` line in the issue body so the relationship is at least human-readable.
-
-### Step 4 — Issue body structure
+### Step 3 — Sub-issue body structure
 
 Keep sub-issue bodies minimal — GitHub renders the parent link and blocking relationships natively, so duplicating them in the body is noise.
+
+Each sub-issue body must follow this structure:
 
 ```markdown
 ## Parent spec
@@ -252,6 +233,27 @@ _(omit a category if empty)_
 ```
 
 Do not include a "Blockers" or "Unblocks" section — GitHub's dependency graph on the parent and on each sub-issue shows this.
+
+### Step 4 — Create sub-issues in dependency order
+
+> **Gate:** Only proceed once the user has approved the proposal (see [Proposal & Approval](#proposal--approval-required-before-any-writes)). This is especially important in online mode — created GitHub issues can't be cleanly undone, only closed.
+
+For each decomposed issue, in dependency order (earliest dependencies first):
+
+1.  Render the body using the structure from Step 3 and write it to `/tmp/subissue-<slug>-<timestamp>.md`. `/tmp` is self-cleaning on reboot.
+2.  Create the issue:
+    ```bash
+    gh issue create --title "<Title>" --body-file /tmp/subissue-<slug>-<timestamp>.md
+    ```
+    Capture the new issue's number and node ID. Get the ID via:
+    ```bash
+    gh api "/repos/<owner>/<repo>/issues/<number>" --jq .id
+    ```
+3.  Attach as a sub-issue of the parent using the GitHub Sub-Issues API:
+    ```bash
+    gh api -X POST "/repos/<owner>/<repo>/issues/<parent>/sub_issues" -F sub_issue_id=<child_id>
+    ```
+4.  For each blocker (a previously created sub-issue this one depends on), add a blocking relationship using the GitHub Issue Dependencies API. Use `gh api` with the current dependencies endpoint (the agent should verify exact syntax against GitHub's docs at the time of execution; the relationship is "this issue is blocked by <blocker>"). If the API call fails, fall back to adding a `Blocked by #N` line in the issue body so the relationship is at least human-readable.
 
 ### Step 5 — Verify
 
