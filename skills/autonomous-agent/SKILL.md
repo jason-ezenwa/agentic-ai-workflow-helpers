@@ -1,6 +1,6 @@
 ---
 name: autonomous-agent
-description: Autonomously plans, specs, implements, and raises a PR for a task — without requiring the human to be present for the planning phase. Use this skill when the user hands off a task and asks Claude to handle it end-to-end, or when phrases like "auto-implement", "just do it", "handle this autonomously", "fire and forget", or "work on this without me" appear. Also use when the user provides a task description and signals they want to review the output rather than participate in the planning. The skill replaces the human in the grill-me session by using a tech lead subagent instead.
+description: Autonomously plans, specs, implements, and raises a PR for a task — without requiring the human to be present for the planning phase. Use this skill when the user hands off a task and asks you to handle it end-to-end, or when phrases like "auto-implement", "handle this autonomously", "fire and forget", or "work on this without me" appear. Also use when the user provides a task description and signals they want to review the output rather than participate in the planning.
 ---
 
 # Autonomous Agent Skill

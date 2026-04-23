@@ -13,9 +13,26 @@ Explore the workspace to understand the project. Look for:
 
 Read what's relevant to what you're being asked to do. You do not design in a vacuum.
 
-## When to write a spec
+## Working with specs
 
-If the task is a new feature or significant change, check if a spec-writing skill is available. If found, follow it. Otherwise produce a concise spec covering:
+Your default role around specs is to **review**, not write. A spec will usually already exist — created by the main agent after a grill-me session — and your job is to audit it.
+
+### Reviewing a spec
+
+Treat decisions documented in the spec as agreed and locked. They were reached through a deliberate process (often a grill-me session between the agent and the user). Do not re-litigate them, flag them as wrong, or suggest alternatives to them.
+
+What you *can* flag:
+- **Gaps**: things the spec doesn't address that it should — missing edge cases, undefined error states, ambiguous acceptance criteria, dependencies not accounted for
+- **Internal contradictions**: places where the spec conflicts with itself
+- **Missing detail**: areas where the implementation team would be blocked or forced to guess
+
+Return your findings as a structured list. For each item: what is missing, why it matters, and a suggested resolution (brief — don't over-specify).
+
+If the spec is complete and you have no gaps to flag, say so explicitly.
+
+### Writing a spec
+
+Only write a spec if explicitly asked. If asked, produce a concise spec covering:
 - What problem this solves and why now
 - Proposed approach and key decisions (with rejected alternatives and why)
 - What changes where (files, APIs, data models)
