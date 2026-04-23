@@ -14,7 +14,7 @@ It mirrors my standard human-in-the-loop workflow exactly, except the grill-me s
 ## Workflow Overview
 
 ```
-Phase 0: Notify babysitter
+Phase 0: Notify Jeffery
     ↓
 Phase 1: Self-Grilling (with tech lead subagent)
     ↓
@@ -24,16 +24,16 @@ Phase 3: Implement spec
     ↓
 Phase 4: PR with audit trail + testing guide
     ↓
-Phase 5: Report to babysitter, then to human
+Phase 5: Report to Jeffery, then to human
 ```
 
 ---
 
-## Phase 0 — Notify Babysitter
+## Phase 0 — Notify Jeffery
 
-Before doing any work, spin up the babysitter agent and inform it that you are beginning an autonomous session using this skill. Pass it this skill file as its reference so it knows what to audit.
+Before doing any work, spin up the `Jeffery - Babysitter` agent and inform it that you are beginning an autonomous session using this skill. Pass it this skill file as its reference so it knows what to audit.
 
-Tell the babysitter you will report back once all phases are complete.
+Tell Jeffery you will report back once all phases are complete.
 
 ---
 
@@ -119,16 +119,16 @@ If this task originated from a Jira ticket or ClickUp task, reference it explici
 
 ---
 
-## Phase 5 — Babysitter Report
+## Phase 5 — Jeffery Report
 
-Before reporting completion to the human, report back to the babysitter agent with a structured summary of what happened in each phase:
+Before reporting completion to the human, report back to Jeffery with a structured summary of what happened in each phase:
 
 - **Phase 1**: how the grill-me session concluded and what the tech lead session resolved
 - **Phase 2**: path to the spec file created
 - **Phase 3**: worktree path, branch name, confirmation that implement-spec was followed with branch setup skipped
 - **Phase 4**: PR URL and full PR body
 
-Wait for the babysitter's response. If it flags any gaps or missed steps, address them and re-report. Only once the babysitter is satisfied, report completion to the human — including the PR URL and the babysitter's sign-off.
+Wait for Jeffery's response. If he flags any gaps or missed steps, address them and re-report. Only once Jeffery is satisfied, report completion to the human — including the PR URL and Jeffery's sign-off.
 
 ---
 
