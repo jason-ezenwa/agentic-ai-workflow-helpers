@@ -44,7 +44,9 @@ Reach the same shared understanding you would have after a grill-me session with
 
 ### Running the session
 
-Follow the `grill-me` skill exactly, but direct every question at the tech lead subagent instead of the human.
+Spawn the tech lead subagent. Follow the `grill-me` skill exactly, but direct every question at the tech lead subagent instead of the human.
+
+**Keep a reference to this tech lead agent** — you will need to send it the spec in Phase 2. Do not treat it as a one-shot agent.
 
 ### Termination condition
 
@@ -54,13 +56,31 @@ If there are unresolved blockers that genuinely require human input, **stop here
 
 ---
 
-## Phase 2 — Spec Creation
+## Phase 2 — Spec Creation and Validation
 
-Follow the `create-technical-spec` skill exactly.
+### Step 1 — Create the spec
 
-The spec should reflect the decisions and understanding reached in Phase 1. Do not re-open questions that were already resolved.
+Follow the `create-technical-spec` skill exactly. The spec should reflect the decisions and understanding reached in Phase 1. Do not re-open questions that were already resolved.
 
 Save to: `specs/<feature-name>.md`
+
+### Step 2 — Tech lead validation
+
+Send the spec to the **same tech lead agent from Phase 1** — not a new instance. Because it was present for the grill-me session, it holds the shared understanding that the spec must reflect.
+
+Ask it to review the spec for alignment with what was agreed, following its spec review behaviour. Specifically, it should flag:
+- Anything that drifts from decisions reached in Phase 1
+- Places where the spec suggests the main agent misunderstood something that was discussed
+- Gaps that were not addressed during the grill-me session and are still unresolved in the spec
+
+### Step 3 — Reconcile
+
+If the tech lead flags issues:
+- Address each one. Decisions already agreed in Phase 1 are not up for debate — if the spec drifted from them, correct the spec. If a gap is new, resolve it now.
+- Update the spec and re-send it to the tech lead for a second pass.
+- Repeat until the tech lead has no remaining flags.
+
+Only once the tech lead confirms the spec is aligned, proceed to Phase 3.
 
 ---
 
