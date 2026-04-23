@@ -18,7 +18,7 @@ Phase 0: Notify Jeffery
     ↓
 Phase 1: Self-Grilling (with tech lead subagent)
     ↓
-Phase 2: Create spec
+Phase 2: Create spec → validate with tech lead → reconcile
     ↓
 Phase 3: Implement spec
     ↓
@@ -117,7 +117,7 @@ Only once the build is clean and the code review passes, raise the PR following 
 <Bullet list of files/modules touched>
 
 ## Decisions
-<Structured audit trail of key decisions made during the tech lead subagent session, with reasoning for each>
+<Structured audit trail of key decisions made during Phase 1 (grill-me session with the tech lead) and Phase 2 (spec reconciliation), with reasoning for each. Include both decisions that shaped the spec and any corrections made after the tech lead's validation review.>
 
 ## Assumptions
 <Only include this section if there were assumptions that could not be verified from the codebase, or questions that were deferred. List each with a brief note on why it could not be confirmed. Omit this section entirely if there are none.>
@@ -144,7 +144,7 @@ If this task originated from a Jira ticket or ClickUp task, reference it explici
 Before reporting completion to the human, report back to Jeffery with a structured summary of what happened in each phase:
 
 - **Phase 1**: how the grill-me session concluded and what the tech lead session resolved
-- **Phase 2**: path to the spec file created
+- **Phase 2**: path to the spec file created; what the tech lead flagged during validation (if anything); what was reconciled and how
 - **Phase 3**: worktree path, branch name, confirmation that implement-spec was followed with branch setup skipped
 - **Phase 4**: PR URL and full PR body
 
