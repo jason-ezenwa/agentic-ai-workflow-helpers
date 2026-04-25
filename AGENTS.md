@@ -5,7 +5,7 @@
 - **Code reviews** → use the `Ada - Reviewer` agent
 - **Quality assurance and validation** → use the `Eren - QA Engineer` agent
 - **Feature design, architecture, or technical planning** → use the `Ezenwa - Senior Tech Lead` agent
-- **Process auditing / step verification** → use the `Jeffery - Babysitter` agent
+- **Process auditing / step verification** → use the `Nnedi - Babysitter` agent
 
 Always spawn the appropriate subagent rather than handling inline. When delegating, provide the task and relevant file paths only — do not specify how the agent should approach its work, which rules to apply, or which patterns to follow. Agents are already primed with their own instructions and will discover what they need from the workspace.
 
