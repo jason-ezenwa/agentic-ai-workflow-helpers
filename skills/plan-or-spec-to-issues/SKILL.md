@@ -9,8 +9,8 @@ description: Breaks down a plan or technical spec into dependency-ordered implem
 
 You will be given one of:
 
-- A **local plan or spec file** — a markdown file on disk, typically produced by the `create-technical-spec` skill
-- A **GitHub issue** — referenced by URL or issue number on the current repo, typically produced by the `create-technical-spec` skill in issue mode
+- A **local plan or spec file** — a markdown file on disk, typically produced by the `/create-technical-spec` skill
+- A **GitHub issue** — referenced by URL or issue number on the current repo, typically produced by the `/create-technical-spec` skill in issue mode
 
 Read the source document thoroughly before doing anything else (fetch via `gh issue view <num> --json title,body -q .body` if it's an issue).
 
@@ -178,8 +178,8 @@ Group issues by their level. For each level, write a natural-language note descr
 ## Picking up an issue
 
 1. Verify all blockers for the issue are merged — do not start against unmerged dependency branches
-2. Set up an isolated worktree using the `setup-worktree` skill
-3. Implement using the `implement-spec` skill — this commits and raises a PR automatically
+2. Set up an isolated worktree using the `/setup-worktree` skill
+3. Implement using the `/implement-spec` skill — this commits and raises a PR automatically
 ```
 
 ### Step 6 — Report

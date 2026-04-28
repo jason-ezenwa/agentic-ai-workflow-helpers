@@ -75,9 +75,9 @@ For each subagent, provide:
 
 #### Implementation Approach by File Type
 
-**Backend service files and utility functions** — do not delegate to a subagent. These require close iteration and are not suitable for parallel work. Implement them yourself in the main session. Follow `references/tdd.md` for all service methods and utility functions.
+**Backend service files and utility functions** — do not delegate to a subagent. These require close iteration and are not suitable for parallel work. Implement them yourself in the main session. Follow the TDD workflow from `/implement-spec/references/tdd.md` for all service methods and utility functions.
 
-**Frontend with Figma designs** — if the spec includes Figma design references or URLs, follow `references/figma-to-code.md` for the implementation of all UI components and pages.
+**Frontend with Figma designs** — if the spec includes Figma design references or URLs, follow the Figma-to-Code workflow from `/implement-spec/references/figma-to-code.md` for the implementation of all UI components and pages.
 
 **Everything else** (DTOs, models, resolvers, config, pages, components, etc.) — implement directly, file-by-file, following the codebase's existing patterns. These files can be delegated to subagents if parallelising.
 
@@ -85,8 +85,8 @@ For each subagent, provide:
 
 Before moving to Step 3, confirm:
 
-- [ ] If service files or utility functions were implemented: did I follow the TDD workflow in `references/tdd.md`?
-- [ ] If Figma designs were provided: did I follow the figma-to-code workflow in `references/figma-to-code.md`?
+- [ ] If service files or utility functions were implemented: did I follow the TDD workflow from `/implement-spec/references/tdd.md`?
+- [ ] If Figma designs were provided: did I follow the Figma-to-Code workflow from `/implement-spec/references/figma-to-code.md`?
 
 ### 3. Verification (The "Build" Check)
 **CRITICAL**: You must ensure the application builds successfully after your changes.

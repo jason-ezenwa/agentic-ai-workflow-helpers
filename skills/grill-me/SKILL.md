@@ -11,4 +11,4 @@ If a question can be answered by exploring the codebase, explore the codebase in
 
 When we've reached shared understanding, produce the output:
 - **If in plan mode**: generate a plan.
-- **Otherwise**: follow the `create-technical-spec` skill.
+- **Otherwise**: invoke the `/create-technical-spec` skill.

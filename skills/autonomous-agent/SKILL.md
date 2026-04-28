@@ -44,7 +44,7 @@ Reach the same shared understanding you would have after a grill-me session with
 
 ### Running the session
 
-Spawn the tech lead subagent. Follow the `grill-me` skill exactly, but direct every question at the tech lead subagent instead of the human.
+Spawn the tech lead subagent. Invoke the `/grill-me` skill, directing every question at the tech lead subagent instead of the human.
 
 **Keep a reference to this tech lead agent** — you will need to send it the spec in Phase 2. Do not treat it as a one-shot agent.
 
@@ -60,7 +60,7 @@ If there are unresolved blockers that genuinely require human input, **stop here
 
 ### Step 1 — Create the spec
 
-Follow the `create-technical-spec` skill exactly. The spec should reflect the decisions and understanding reached in Phase 1. Do not re-open questions that were already resolved.
+Invoke the `/create-technical-spec` skill. The spec should reflect the decisions and understanding reached in Phase 1. Do not re-open questions that were already resolved.
 
 Save to: `specs/<feature-name>.md`
 
@@ -89,10 +89,10 @@ Only once the tech lead confirms the spec is aligned, proceed to Phase 3.
 You act as orchestrator with a lean context window.
 
 ### Worktree setup
-First, follow the `setup-worktree` skill to create an isolated worktree for this task. The branch will be created during this step.
+Invoke the `/setup-worktree` skill to create an isolated worktree for this task. The branch will be created during this step.
 
 ### Implementation
-Follow the `implement-spec` skill, **skipping Step 0 (Branch Setup)** — the branch and worktree are already in place from the previous step.
+Invoke the `/implement-spec` skill, **skipping Step 0 (Branch Setup)** — the branch and worktree are already in place from the previous step.
 
 Hand off the actual code writing to an implementation subagent for each phase of `implement-spec`. Your role is to:
 
@@ -107,7 +107,7 @@ The implementation subagent should receive: the spec, the relevant repo(s), and 
 
 ## Phase 4 — Pull Request
 
-Only once the build is clean and the code review passes, raise the PR following the `implement-spec` skill's PR creation step (Step 5), with the following body structure:
+Only once the build is clean and the code review passes, raise the PR following the `/implement-spec` skill's PR creation step (Step 5), with the following body structure:
 
 ```
 ## Summary
@@ -166,3 +166,9 @@ Wait for the babysitter's response. If it flags any gaps or missed steps, addres
 
 - If at any point during Phase 1 you encounter a genuine blocker that cannot be resolved without human input, **stop and surface it**. Do not guess past a hard blocker.
 - The decisions section in the PR is not a formality — it should contain real reasoning, not platitudes.
+
+---
+
+## Gotchas
+
+For each skill referenced within this skill (and its subskills), **you must invoke it using the Skill tool, wait for it to load, then follow its distinct instructions**.
