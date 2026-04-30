@@ -129,7 +129,8 @@ find . -maxdepth 3 -name '.env*' -type f
 Copy each one to the corresponding relative path inside the worktree, preserving directory structure:
 
 ```bash
-cp --parents <env-file> ../<repo>-worktrees/<branch-slug>/
+mkdir -p ../<repo>-worktrees/<branch-slug>/$(dirname <env-file>)
+cp <env-file> ../<repo>-worktrees/<branch-slug>/<env-file>
 ```
 
 If no `.env*` files are found, note this in the report — the user may need to add them manually.
