@@ -56,6 +56,11 @@ This skill guides you through implementing a feature defined in a Technical Spec
 1.  **Read the Spec**: Use the tool available to you for reading files to read the target technical specification artifact (e.g., `specs/feature-name.md`).
 2.  **Understand Guardrails**: Pay close attention to the "Goals", "Non-Goals", and "API Design" sections. These are your acceptance criteria.
 
+### 1b. Task List Creation
+After reading the spec, create a task list combining skill workflow steps and feature work items. List everything before writing any code. The list must cover both:
+1. **Skill workflow items** (the skeleton): Branch Setup, Analysis & Planning, Task List Creation, Implementation (TDD gate, shared deps, parallelisation), Verification, Code Review, PR Creation.
+2. **Feature work items** (the meat): endpoints, services, models, DTOs, components, pages — drawn from the spec's API Design, Goals, and architecture sections.
+
 ### 2. Implementation
 
 #### Parallelisation
