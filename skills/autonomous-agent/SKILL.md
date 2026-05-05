@@ -92,16 +92,7 @@ You act as orchestrator with a lean context window.
 Invoke the `/setup-worktree` skill to create an isolated worktree for this task. The branch will be created during this step.
 
 ### Implementation
-Invoke the `/implement-spec` skill, **skipping Step 0 (Branch Setup)** — the branch and worktree are already in place from the previous step.
-
-Hand off the actual code writing to an implementation subagent for each phase of `implement-spec`. Your role is to:
-
-- Spawn the implementation subagent with the spec and relevant context for each phase
-- Receive the output and decide whether to proceed, retry, or escalate
-- Spawn the code review subagent at the appropriate checkpoint
-- Iterate until code review comes back clean
-
-The implementation subagent should receive: the spec, the relevant repo(s), and the specific phase it is responsible for. It should not carry context from prior phases unless explicitly passed.
+Invoke the `/implement-spec` skill, **skipping Step 0 (Branch Setup)** — the branch and worktree are already in place from the previous step. The skill will guide delegation decisions.
 
 ---
 
