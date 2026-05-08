@@ -5,6 +5,8 @@ description: Implements a feature based on a provided technical specification, e
 
 # Implement Spec Skill
 
+> All paths are relative to the skill's base directory provided when you load the skill.
+
 This skill guides you through implementing a feature defined in a Technical Specification file (usually in `specs/`). It mandates a strict workflow of Branch Setup -> Planning -> Implementation -> Verification -> Code Review -> PR Creation.
 
 ## Workflow
@@ -65,33 +67,35 @@ After reading the spec, create a task list combining skill workflow steps and fe
 
 #### Parallelisation
 
-Before writing any code, read the spec and identify independent work streams — logical units of work that don't depend on each other at compile time. Both backend streams (service, repository, module) and frontend streams (components, pages, hooks) are valid candidates.
+Only frontend work is suitable for parallelisation. Backend work (services, repositories, modules) must be implemented sequentially by the main agent following the TDD workflow.
+
+Before writing any code, read the spec and identify independent work streams — frontend components, pages, hooks that don't depend on each other at compile time.
 
 **Shared dependencies first**: any file that other streams will import (DTOs, types, base components, constants) must be implemented in the main session before parallel work begins.
 
-Once shared dependencies exist, delegate independent streams to subagents — up to a maximum of 3. Do not always spin up 3; use as many as the work genuinely calls for. Parallelise only if there are 3+ logically independent work streams that are self-contained enough to implement without constant iteration between streams. If unsure or the spec is small, stick with sequential implementation in the main session.
+Once shared dependencies exist, delegate frontend streams to subagents — up to a maximum of 2. Do not always spin up 2; use as many as the work genuinely calls for. Parallelise only if there are 2+ independent frontend work streams. If unsure or the spec is small, stick with sequential implementation.
 
 For each subagent, provide:
 - The path to the spec file so it can read the full context itself
 - The specific files it is responsible for
-- A brief note on its role in the overall implementation (e.g. "you are implementing the backend service layer; the DTOs it depends on are already in place at `src/dto/foo.dto.ts`")
+- A brief note on its role in the overall implementation (e.g. "you are implementing the dashboard page and its components")
 
 **Do not commit during subagent work.** Subagents implement and return results. Review their output, apply any corrections, then commit everything together after verification.
 
 #### Implementation Approach by File Type
 
-**Backend service files and utility functions** — do not delegate to a subagent. These require close iteration and are not suitable for parallel work. Implement them yourself in the main session. Follow the TDD workflow from `/implement-spec/references/tdd.md` for all service methods and utility functions.
+**Backend service files and utility functions** — implement them yourself in the main session. Follow the TDD workflow. See [TDD guide](references/tdd.md) for details.
 
-**Frontend with Figma designs** — if the spec includes Figma design references or URLs, follow the Figma-to-Code workflow from `/implement-spec/references/figma-to-code.md` for the implementation of all UI components and pages.
+**Frontend with Figma designs** — follow the Figma-to-Code workflow. See [Figma-to-Code guide](references/figma-to-code.md) for details.
 
-**Everything else** (DTOs, models, resolvers, config, pages, components, etc.) — implement directly, file-by-file, following the codebase's existing patterns. These files can be delegated to subagents if parallelising.
+**Everything else** (DTOs, models, resolvers, config, pages, components, etc.) — implement directly, file-by-file, following the codebase's existing patterns.
 
 #### Implementation Gate
 
 Before moving to Step 3, confirm:
 
-- [ ] If service files or utility functions were implemented: did I follow the TDD workflow from `/implement-spec/references/tdd.md`?
-- [ ] If Figma designs were provided: did I follow the Figma-to-Code workflow from `/implement-spec/references/figma-to-code.md`?
+- [ ] If service files or utility functions were implemented: did I follow the TDD workflow? `references/tdd.md`
+- [ ] If Figma designs were provided: did I follow the Figma-to-Code workflow? `references/figma-to-code.md`
 
 ### 3. Verification (The "Build" Check)
 **CRITICAL**: You must ensure the application builds successfully after your changes.

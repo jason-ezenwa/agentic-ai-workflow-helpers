@@ -5,11 +5,13 @@ description: QA skill for browser-based UI validation and functional test plan e
 
 # Quality Assurance
 
+> All paths are relative to the skill's base directory provided when you load the skill.
+
 ## Determine your mode
 
-**UI validation** — you have been given a URL, Figma node IDs, and frame dimensions to validate against. Follow `references/ui-validation.md`.
+**UI validation** — you have been given a URL, Figma node IDs, and frame dimensions to validate against. Follow [UI validation guide](references/ui-validation.md).
 
-**Test plan execution** — you have been given a feature description and a test plan with scenarios and expected outcomes. Follow `references/execute-test-plan.md`.
+**Test plan execution** — you have been given a feature description and a test plan with scenarios and expected outcomes. Follow [test plan guide](references/execute-test-plan.md).
 
 ---
 

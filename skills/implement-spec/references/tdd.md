@@ -16,6 +16,10 @@ TDD applies to:
 
 TDD does **not** apply to DTOs, models, resolvers, or config files — implement those directly.
 
+## Sequential Only
+
+TDD requires tight feedback loops and is not suitable for parallel work. Do not delegate service file implementation to subagents — implement them yourself in the main session, iterating through the RED-GREEN-refactor cycle sequentially.
+
 ---
 
 ## Workflow
