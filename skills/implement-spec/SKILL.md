@@ -7,52 +7,12 @@ description: Implements a feature based on a provided technical specification, e
 
 > All paths are relative to the skill's base directory provided when you load the skill.
 
-This skill guides you through implementing a feature defined in a Technical Specification file (usually in `specs/`). It mandates a strict workflow of Branch Setup -> Planning -> Implementation -> Verification -> Code Review -> PR Creation.
+This skill guides you through implementing a feature defined in a Technical Specification file (usually in `specs/`). It mandates a strict workflow of Worktree Setup -> Analysis & Planning -> Implementation -> Verification -> Code Review -> PR Creation.
 
 ## Workflow
 
-### 0. Branch Setup (Before Any Code Changes)
-**CRITICAL**: All work must happen on a dedicated branch. Never commit implementation work directly to a base branch.
-
-1. **Check working tree**: Run `git status` first. If there are uncommitted changes:
-   - **If creating a new branch** (step 3 will show the branch doesn't exist): require a clean tree before checking out and pulling the base branch. Tell the user what is dirty and ask whether to stash those changes or abort.
-   - **If continuing on an existing branch** (step 3 will show the branch exists): inspect whether the dirty files overlap with the task at hand. If they do, ask the user how to proceed. If they are unrelated, continue without touching them. Never silently revert changes you didn't make.
-
-2. **Derive expected branch name**: Slugify the spec filename or task description into kebab-case. Choose a prefix that reflects the type of change:
-   - New feature → `feat/`
-   - Bug fix → `fix/`
-   - Refactor / maintenance → `chore/`
-   - Hotfix → `hotfix/`
-   - Fallback when type is unclear → `feat/`
-
-   Example: `feat/contractor-onboarding`, `fix/invoice-rounding-logic`
-
-3. **Check if the branch already exists** (locally or remotely):
-   ```bash
-   git show-ref --verify refs/heads/<branch-name>          # local
-   git show-ref --verify refs/remotes/origin/<branch-name> # remote
-   ```
-   - **If it exists**: check it out and pull any remote changes. This is a continuation of previous work — do not create a new branch.
-     ```bash
-     git checkout <branch-name>
-     git pull origin <branch-name>   # no-op if no remote yet
-     ```
-   - **If it does not exist**: proceed to steps 4–5 to create it fresh.
-
-4. **[New branch only] Detect base branch** in priority order (`develop` > `development` > `main`):
-   ```bash
-   for branch in develop development main; do
-     if git show-ref --verify --quiet refs/remotes/origin/$branch; then
-       echo $branch; break
-     fi
-   done
-   ```
-
-5. **[New branch only] Switch to base branch, pull latest, and create the branch**:
-   ```bash
-   git checkout <base-branch> && git pull origin <base-branch>
-   git checkout -b <branch-name>
-   ```
+### 0. Worktree Setup
+Invoke the `/setup-worktree` skill to create an isolated worktree for this task. After the worktree is created, proceed to Analysis & Planning.
 
 ### 1. Analysis & Planning
 1.  **Read the Spec**: Use the tool available to you for reading files to read the target technical specification artifact (e.g., `specs/feature-name.md`).
