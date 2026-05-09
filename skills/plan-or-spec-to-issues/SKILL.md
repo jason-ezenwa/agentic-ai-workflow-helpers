@@ -178,8 +178,7 @@ Group issues by their level. For each level, write a natural-language note descr
 ## Picking up an issue
 
 1. Verify all blockers for the issue are merged — do not start against unmerged dependency branches
-2. Invoke the `/setup-worktree` skill to create an isolated worktree
-3. Invoke the `/implement-spec` skill — this commits and raises a PR automatically
+2. Invoke the `/implement-spec` skill — this guides you through creating a worktree entry, implementing the feature or task, and raising a PR
 ```
 
 ### Step 6 — Report
