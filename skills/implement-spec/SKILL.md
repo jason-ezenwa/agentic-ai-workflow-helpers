@@ -7,7 +7,7 @@ description: Implements a feature based on a provided technical specification, e
 
 > All paths are relative to the skill's base directory provided when you load the skill.
 
-This skill guides you through implementing a feature defined in a Technical Specification file (usually in `specs/`). It mandates a strict workflow of Worktree Setup -> Analysis & Planning -> Implementation -> Verification -> Code Review -> PR Creation.
+This skill creates a worktree entry, implements a feature from a Technical Specification file (usually in `specs/`), and raises a PR. It invokes `/setup-worktree` first, then follows this workflow: Analysis & Planning -> Implementation -> Verification -> Code Review -> PR Creation.
 
 ## Workflow
 
