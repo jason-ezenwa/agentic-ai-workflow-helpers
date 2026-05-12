@@ -73,7 +73,7 @@ Pass the sub-agent the list of files changed and the spec content. It returns a 
 3.  **Quality**: Are there any linting errors or obvious bugs?
 4.  **Consistency**: Does the code match the "Proposed Architecture"?
 
-> **If you find discrepancies:** Fix them now. Do not ask the user for permission to fix bugs you introduced. Once fixes are applied, **spawn the sub-agent one more time** to confirm the issues are resolved. If issues persist after this second pass, escalate to the user rather than looping further.
+> **If you find discrepancies:** Fix them now. Do not ask the user for permission to fix bugs you introduced. Once fixes are applied, **send the changes to the same sub-agent for re-review** — not a new instance. If issues persist after this second pass, escalate to the user rather than looping further.
 
 ### 5. PR Creation (After Clean Code Review)
 Only once the build is clean and the code review passes:
