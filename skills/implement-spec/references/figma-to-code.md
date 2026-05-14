@@ -114,7 +114,7 @@ For each failure in the report:
 2. Cross-reference the Figma design context from Step 2 for the correct value
 3. Update the code to match
 
-Once fixes are applied, **delegate to the QA agent again** to re-validate. Repeat until the report is a full pass.
+Once fixes are applied, **send the changes to the same QA sub-agent for re-validation** — not a new instance. Repeat until the report is a full pass.
 
 ### 6c: Final Validation Checklist
 
@@ -135,7 +135,7 @@ Only mark complete when the QA report shows ALL passing:
 | Issue | Cause | Solution |
 |-------|-------|----------|
 | Design context is truncated | Design is too complex for a single response | Use `get_metadata` to get node structure, then fetch specific child nodes individually |
-| Visual mismatch after implementation | Spacing, colour, or typography discrepancy | Fix the flagged CSS properties, then re-delegate to the QA agent for re-validation |
+| Visual mismatch after implementation | Spacing, colour, or typography discrepancy | Fix the flagged CSS properties, then send to the same QA sub-agent for re-validation |
 | Assets not loading | `localhost` URLs being modified | Use the MCP-provided `localhost` URLs directly without modification |
 | Design tokens differ from Figma | Project tokens have different values | Prefer project tokens for consistency; adjust spacing/sizing minimally to match visuals |
 | Code Connect script appears | Component mapping required | Stop and follow the script exactly; do not proceed until resolved or skipped |
