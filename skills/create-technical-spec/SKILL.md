@@ -86,6 +86,19 @@ Once a spec lives as an issue, treat the **issue body as the source of truth**. 
 
 ---
 
+## Figma References (when translating designs to code)
+
+Group Figma frame URLs by purpose, e.g.:
+- Full-page layouts
+- Component references
+- Asset nodes (icons, images to export)
+
+Each entry is a clickable Markdown link to the user-provided URL with a short label. No node IDs in body text — the URL is enough.
+
+When this section is present, add "Pixel-perfect parity with the Figma full-layout frames" as a Goal.
+
+---
+
 ## Goals & Non-Goals
 **Goals**: Technical objectives (scalability, performance targets, app builds fine with no introduced lint or type errors, etc.)
 **Non-Goals**: What we're explicitly not doing in this iteration
