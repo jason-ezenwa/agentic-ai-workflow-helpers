@@ -52,6 +52,6 @@ The script automatically:
 4. Checks whether the branch exists locally or remotely, and resumes it if it does.
 5. Creates a worktree at `../<repo>-worktrees/<branch-slug>`.
 6. Copies `.env*` files up to 3 directories deep.
-7. Copies `specs/` and `spec/` directories (up to 3 levels deep) so git-ignored spec files are available in the worktree.
+7. Copies the root-level `specs/` directory (if present) so git-ignored spec files are available in the worktree.
 8. Installs dependencies using the detected package manager.
 9. Outputs a JSON report with path, branch, spec dirs copied, and next command.
