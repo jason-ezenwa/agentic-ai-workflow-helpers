@@ -141,6 +141,7 @@ main() {
 
     local spec_dirs=()
     if [[ -d "./specs" ]]; then
+        # realpath resolves symlinks before copying to avoid circular traversal (e.g. specs/ -> ../specs)
         local specs_real
         specs_real=$(realpath "./specs")
         cp -r "$specs_real" "$worktree_path/specs"
