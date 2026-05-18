@@ -141,7 +141,9 @@ main() {
 
     local spec_dirs=()
     if [[ -d "./specs" ]]; then
-        cp -r "./specs" "$worktree_path/"
+        local specs_real
+        specs_real=$(realpath "./specs")
+        cp -r "$specs_real" "$worktree_path/specs"
         spec_dirs+=("specs")
     fi
 
