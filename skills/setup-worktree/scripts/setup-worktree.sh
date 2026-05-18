@@ -159,12 +159,12 @@ main() {
 {
   "path": "$worktree_absolute",
   "branch": "$branch_name",
-  "base-branch": "$base_branch",
+  "base_branch": "$base_branch",
   "action": "$action",
-  "env-files": $(printf '%s\n' "${env_files[@]}" | jq -R . | jq -s .),
-  "spec-dirs": $(printf '%s\n' "${spec_dirs[@]}" | jq -R . | jq -s .),
-  "install-status": "$install_status",
-  "cd-command": "cd $worktree_absolute"
+  "env_files": $(printf '%s\n' "${env_files[@]}" | jq -R . | jq -s .),
+  "spec_dirs": $(printf '%s\n' "${spec_dirs[@]}" | jq -R . | jq -s .),
+  "install_status": "$install_status",
+  "cd_command": "cd $worktree_absolute"
 }
 EOF
 }
