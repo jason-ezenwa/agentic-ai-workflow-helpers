@@ -139,6 +139,15 @@ main() {
         env_files+=("$relative_path")
     done < <(find . -maxdepth 3 -name '.env*' -type f -print0)
 
+    local spec_dirs=()
+    while IFS= read -r -d '' dir; do
+        local relative_path="${dir#./}"
+        local dest_dir="$worktree_path/$relative_path"
+        mkdir -p "$(dirname "$dest_dir")"
+        cp -r "$dir" "$(dirname "$dest_dir")/"
+        spec_dirs+=("$relative_path")
+    done < <(find . -maxdepth 3 \( -name 'specs' -o -name 'spec' \) -type d -print0)
+
     local install_status="success"
     local install_output=""
     if ! (cd "$worktree_path" && "$package_manager" install); then
@@ -156,6 +165,7 @@ main() {
   "baseBranch": "$base_branch",
   "action": "$action",
   "envFiles": $(printf '%s\n' "${env_files[@]}" | jq -R . | jq -s .),
+  "specDirs": $(printf '%s\n' "${spec_dirs[@]}" | jq -R . | jq -s .),
   "installStatus": "$install_status",
   "cdCommand": "cd $worktree_absolute"
 }
