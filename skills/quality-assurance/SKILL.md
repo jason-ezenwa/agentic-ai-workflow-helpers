@@ -74,3 +74,7 @@ curl -s -X GET "https://api.example.com/endpoint" \
 ## Browser Tooling Note
 
 When launching Playwright or claude-in-chrome, if you see a "Playwright Extension started debugging this browser" page showing "unknown" connected and the connection seems stuck, do a single page reload — that completes the connection. **Do NOT** relaunch the browser in a retry loop; just refresh once and proceed.
+
+## Input Handling
+
+Prefer using the `fill` method over typing character by character unless the input form doesn't propagate the `fill` as expected. Use `type` or `press` only when `fill` fails to trigger the expected behavior.
