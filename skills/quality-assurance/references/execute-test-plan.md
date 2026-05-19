@@ -34,6 +34,10 @@ Save any screenshots taken during execution to `/tmp/<feature-slug>/`. Create th
 
 After exercising the feature, review console output and network activity for unexpected failures.
 
+### 6. Figma References (if present)
+
+If the test plan includes Figma references, follow the [UI validation guide](references/ui-validation.md) to verify pixel parity with the design. Include the visual validation results in the report.
+
 ## Output
 
 ```
