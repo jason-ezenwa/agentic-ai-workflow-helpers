@@ -15,6 +15,17 @@ description: QA skill for browser-based UI validation and functional test plan e
 
 ---
 
+## Pre-flight check (browser tasks)
+
+Before any browser interaction, snapshot the entry page and confirm:
+
+1. Which user (if any) is signed in.
+2. Whether that matches the account named in the task.
+
+If they don't match — or if no user is signed in and the task names a specific account — **stop and ask** rather than improvising a manual login. The connected Chrome profile is the source of truth for session state.
+
+---
+
 ## Authentication
 
 ### Browser tasks (UI validation and browser-driven test plans)
@@ -22,6 +33,10 @@ description: QA skill for browser-based UI validation and functional test plan e
 Playwright connects to the user's real Chrome browser via the Playwright MCP Bridge extension. The correct Chrome profile is already configured per project — no setup needed.
 
 If the task requires an authenticated session, just proceed — the connected profile already has the user's existing sessions. Do not attempt to log in manually.
+
+**Credentials in the prompt are informational, not an instruction to log in.** If the task prompt provides credentials for a browser test, the connected profile may already hold that session. Run the pre-flight check first; if not signed in as that user, ask before logging in manually.
+
+**Seed state in the same channel you'll test in.** If the test runs in the browser, create preconditions through the browser UI. Do not authenticate via curl and expect that session to carry into the connected browser — they are separate sessions, and data created via curl will appear missing from the browser's perspective.
 
 If the specific browser auth flow has not been specified and is needed, **ask before proceeding**:
 - Which flow? (Google SSO, Gmail OTP, Maildrop OTP, or other)
@@ -75,6 +90,14 @@ curl -s -X GET "https://api.example.com/endpoint" \
 
 When launching Playwright or claude-in-chrome, if you see a "Playwright Extension started debugging this browser" page showing "unknown" connected and the connection seems stuck, do a single page reload — that completes the connection. **Do NOT** relaunch the browser in a retry loop; just refresh once and proceed.
 
+## Playwright MCP gotchas
+
+- **Snapshot refs are single-use.** Refs like `e18` are valid only for the snapshot they were captured from. After any `click`, `navigate`, `fill`, key press, or wait, take a fresh snapshot before using a ref. Never retry the same ref after a "not found" error.
+- **No new tabs in bridge mode.** `browser_tabs new` / `newPage` is not supported when Playwright is bridged to the user's Chrome. Reuse the active tab and `navigate` to change page.
+- **Two strikes rule.** If the same call fails twice with the same error, stop and report. Do not iterate on permutations.
+
 ## Input Handling
 
 Prefer using the `fill` method over typing character by character unless the input form doesn't propagate the `fill` as expected. Use `type` or `press` only when `fill` fails to trigger the expected behavior. As a fallback, use `run code` to execute JavaScript that sets the value directly on the input element.
+
+Re-snapshot between fallbacks. A previous `fill` or `type` attempt may have shifted focus or changed the DOM, invalidating any refs you were about to reuse.
