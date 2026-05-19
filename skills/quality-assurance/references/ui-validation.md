@@ -26,7 +26,7 @@ Call `get_screenshot(fileKey, nodeId)` using the values provided — the Figma r
 
 ### 6. Validate Against Criteria
 
-Work through each criterion provided. For each one, check:
+The criteria should include at minimum: **pixel parity with the Figma reference** plus any specific items mentioned in the validation description. For each criterion provided:
 
 1. **Layout** — spacing, alignment, sizing, overflow
 2. **Typography** — font family, size, weight, line height, color
