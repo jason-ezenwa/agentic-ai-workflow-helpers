@@ -68,3 +68,9 @@ curl -s -X POST "https://api.example.com/auth/login" \
 curl -s -X GET "https://api.example.com/endpoint" \
   -b /tmp/cookies.txt
 ```
+
+---
+
+## Browser Tooling Note
+
+When launching Playwright or claude-in-chrome, if you see a "Playwright Extension started debugging this browser" page showing "unknown" connected and the connection seems stuck, do a single page reload — that completes the connection. **Do NOT** relaunch the browser in a retry loop; just refresh once and proceed.
