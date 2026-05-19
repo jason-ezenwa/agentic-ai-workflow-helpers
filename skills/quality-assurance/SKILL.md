@@ -77,4 +77,4 @@ When launching Playwright or claude-in-chrome, if you see a "Playwright Extensio
 
 ## Input Handling
 
-Prefer using the `fill` method over typing character by character unless the input form doesn't propagate the `fill` as expected. Use `type` or `press` only when `fill` fails to trigger the expected behavior.
+Prefer using the `fill` method over typing character by character unless the input form doesn't propagate the `fill` as expected. Use `type` or `press` only when `fill` fails to trigger the expected behavior. As a fallback, use `run code` to execute JavaScript that sets the value directly on the input element.
